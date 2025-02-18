@@ -6,21 +6,17 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import {Form,} from "@/components/ui/form"
+
 import CustomInput from './CustomInput';
 import { authFormSchema } from '@/lib/utils';
+import { Loader2 } from 'lucide-react';
 
 
 
 const AuthForm = ({ type }:{ type: string}) => {
     const [user, setUser] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<z.infer<typeof authFormSchema>>({
         resolver: zodResolver(authFormSchema),
@@ -32,7 +28,10 @@ const AuthForm = ({ type }:{ type: string}) => {
 
     function onSubmit(values: z.infer<typeof authFormSchema>) {
         
+
+        setIsLoading(true)
         console.log(values)
+        setIsLoading(false)
     }
 
     return (
@@ -74,33 +73,12 @@ const AuthForm = ({ type }:{ type: string}) => {
             <>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <div className="form-item">
-                                <FormLabel className='form-label'>
-                                    Email
-                                </FormLabel>
-                                <div className="flex w-full flex-col">
-                                    <FormControl>
-                                        <Input 
-                                        placeholder='Enter your email'
-                                        className='input-class'
-                                        {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="form-message mt-2" />
-                                </div>
-                            </div>
-                        )}
-                        />
 
-                        <CustomInput 
+                        <CustomInput
                         control={form.control}
-                        name='username'
-                        label='Username'
-                        placeholder='Enter your username'
+                        name='email'
+                        label='Email'
+                        placeholder='Enter your Email'
                         />
 
                         <CustomInput 
@@ -109,33 +87,34 @@ const AuthForm = ({ type }:{ type: string}) => {
                         label='Password'
                         placeholder='Enter your password'
                         />
+                        <div className='flex flex-col gap-4'>
+                            
+                        <Button type="submit" disabled={isLoading} className='form-btn'>
+                            {isLoading ?(
+                                <>
+                                    <Loader2
+                                        size={20}
+                                        className='animate-spin'
+                                    /> &nbsp; Loading...
+                                </>
+                            ): type === 'sign-in'
+                            ? 'Sign In' : 'Sign Up'}
+                        </Button>
 
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <div className="form-item">
-                                    <FormLabel className='form-label'>
-                                        Password
-                                    </FormLabel>
-                                    <div className="flex w-full flex-col">
-                                        <FormControl>
-                                            <Input 
-                                            placeholder='Enter your password'
-                                            className='input-class'
-                                            type='password'
-                                            {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="form-message mt-2" />
-                                    </div>
-                                </div>
-                            )}
-                        />
-                        <Button type="submit">Submit</Button>
+                        </div>
                     </form>
                 </Form>
-  
+                
+                <footer className="flex justify-center gap-1">
+                    <p className='text1-4 font-normal text-gray-600'>
+                        {type ==='sign-in'
+                       ? 'Don\'t have an account?'
+                       : 'Already have an account?'}
+                    </p>
+                    <Link href={type==='sign-in'?'/sign-up':'/sign-in'} className='form-link'>
+                        {type==='sign-in'?'Sign Up':'Sign in'}
+                    </Link>
+                </footer>
             </>
         )
     }
