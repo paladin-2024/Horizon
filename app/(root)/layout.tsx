@@ -6,7 +6,7 @@ children,
 }: Readonly<{
 children: React.ReactNode;
 }>) {
-    const loggedIn = {firstName:'Paladin', lastName:'Caleb'};
+    const loggedIn = {firstName:'Nzabanita', lastName:'Caleb'};
 
 return (
     <main className="flex h-screen w-full font-inter ">

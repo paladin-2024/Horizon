@@ -3,7 +3,7 @@ import RightSideBar from '@/components/RightSideBar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 
 function Home() {
-    const loggedIn= {firstName:'Caleb', lastName:'Paladin', email:'cnzabb@gmail.com'};
+    const loggedIn= {firstName:'Caleb', lastName:'Nzabanita', email:'cnzabb@gmail.com'};
     return (
     <section className='home'>
         <div className='home-content'>
