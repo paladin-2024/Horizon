@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: horizon
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/horizon}
+    username: ${DB_USER:${USER:postgres}}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+
+server:
+  shutdown: graceful
