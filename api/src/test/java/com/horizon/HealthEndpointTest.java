@@ -7,8 +7,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -17,6 +20,9 @@ class HealthEndpointTest {
 
     @Value("${local.server.port}")
     int port;
+
+    @Autowired
+    SecurityFilterChain securityFilterChain;
 
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -41,5 +47,23 @@ class HealthEndpointTest {
     @Test
     void actuatorMetricsRequireAuthentication() throws Exception {
         assertThat(get("/actuator/metrics").statusCode()).isEqualTo(401);
+    }
+
+    @Test
+    void unauthenticatedPostIsRejectedWith401() throws Exception {
+        var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/anything"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode()).isEqualTo(401);
+    }
+
+    @Test
+    void springCsrfFilterIsNotInTheChain() {
+        // An unauthenticated POST already answers 401 because the CSRF 403 is re-dispatched to /error and
+        // turned into a 401, so the status alone cannot show CSRF is off. Check the chain itself.
+        assertThat(securityFilterChain.getFilters()).noneMatch(CsrfFilter.class::isInstance);
     }
 }
