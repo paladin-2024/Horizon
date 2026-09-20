@@ -30,7 +30,6 @@ Horizon/
 │       ├── account/          linked accounts, balances
 │       └── transaction/      transactions, categories, import dedupe
 ├── docs/superpowers/specs/
-├── docker-compose.yml        local Postgres 17
 └── CLAUDE.md
 ```
 
@@ -107,15 +106,22 @@ The UI is otherwise unchanged. Phone-first sign-up needs two visible changes to 
 
 New screens (OTP verification, link account, CSV import) reuse existing tokens, fonts and components. French translation is a later slice and changes text only.
 
+## Local setup (no Docker)
+
+- Requires Java 21 and PostgreSQL 17, both installed natively (Homebrew on macOS). Maven is not needed: the project ships the Maven Wrapper (`./mvnw`).
+- Two local databases on the same Postgres server: `horizon` for development and `horizon_test` for the test suite.
+- Database credentials and JWT secrets come from environment variables or a gitignored `application-local.yml`; nothing secret is committed.
+- Run the API with `./mvnw spring-boot:run` and the frontend with `npm run dev` in `web/`.
+
 ## Testing
 
-JUnit 5 with Testcontainers running Postgres 17 (no mocked database). Unit tests for `Money`, fingerprinting, the rate limiter and the OTP rules. Integration tests for every endpoint, including idempotent replay, token reuse revocation, cross-user access returning `404`, and duplicate CSV import. The transactions list query is checked with `EXPLAIN` to confirm it uses its index. The frontend restructure is checked by rename similarity in git and before and after screenshots.
+JUnit 5 against a real local PostgreSQL 17 test database (`horizon_test`); the database is not mocked and Docker is not used, so Testcontainers is out. The test profile lets Hibernate recreate the schema for each run. Unit tests for `Money`, fingerprinting, the rate limiter and the OTP rules. Integration tests for every endpoint, including idempotent replay, token reuse revocation, cross-user access returning `404`, and duplicate CSV import. The transactions list query is checked with `EXPLAIN` to confirm it uses its index. The frontend restructure is checked by rename similarity in git and before and after screenshots.
 
 ## Delivery order
 
 Each slice is a `feat/` branch and a PR into `dev`.
 
-1. Restructure: move the app into `web/`, add the `api/` skeleton and `docker-compose.yml`. No UI edits.
+1. Restructure: move the app into `web/`, add the `api/` skeleton with the Maven Wrapper and a local setup guide. No UI edits.
 2. Auth: register, OTP, login, refresh, logout, rate limiting, cleanup job; wire the auth forms.
 3. Institutions, linked accounts and the `BankProvider` interface.
 4. Transactions and CSV import.
