@@ -16,7 +16,7 @@ Horizon is a platform where a user in Uganda or DR Congo links all of their bank
 
 ## Architecture
 
-Modular monolith: one Spring Boot 3 app (Java 21, Maven) with one PostgreSQL 17 database. Feature packages keep their internals package-private; other modules use a module's public service only.
+Modular monolith: one Spring Boot 4.1 app (Java 21, Maven; start.spring.io no longer offers Boot 3.x) with one PostgreSQL 17 database. Feature packages keep their internals package-private; other modules use a module's public service only.
 
 ```
 Horizon/
@@ -109,7 +109,7 @@ New screens (OTP verification, link account, CSV import) reuse existing tokens, 
 ## Local setup (no Docker)
 
 - Requires Java 21 and PostgreSQL 17, both installed natively (Homebrew on macOS). Maven is not needed: the project ships the Maven Wrapper (`./mvnw`).
-- Two local databases on the same Postgres server: `horizon` for development and `horizon_test` for the test suite.
+- Two local databases on the same Postgres server: `horizon` for development and `horizon_test` for the test suite. On the current dev machine PostgreSQL 17 listens on port 5433 (PostgreSQL 18 owns 5432), so the app defaults use 5433.
 - Database credentials and JWT secrets come from environment variables or a gitignored `application-local.yml`; nothing secret is committed.
 - Run the API with `./mvnw spring-boot:run` and the frontend with `npm run dev` in `web/`.
 
