@@ -24,16 +24,16 @@ npx tsc --noEmit # type-check
 
 There is no frontend test runner.
 
-Backend (`api/`, Spring Boot 4.1, Java 21, Maven Wrapper):
+Backend (`backend/`, Spring Boot 4.1, Java 21, Maven Wrapper):
 
 ```bash
-cd api
+cd backend
 ./mvnw spring-boot:run                                        # http://localhost:8080
 ./mvnw test                                                   # all tests, real PostgreSQL test DB (horizon_test)
 ./mvnw test -Dtest=HealthEndpointTest#healthIsPublicAndUp     # single test
 ```
 
-Config comes from env vars (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `TEST_DB_URL`, `API_URL`). `.env*` (except a committed `.env.example`) and `application-local.yml` (put it in `api/config/`) are gitignored.
+Config comes from env vars (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `TEST_DB_URL`, `API_URL`). `.env*` (except a committed `.env.example`) and `application-local.yml` (put it in `backend/config/`) are gitignored.
 
 ## Git workflow
 
@@ -44,7 +44,7 @@ Config comes from env vars (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `TEST_DB_URL`, `
 
 ## Architecture
 
-The repo has two apps: `web/` (Next.js, UI only) and `api/` (Spring Boot backend, built slice by slice to the spec in `docs/superpowers/specs/2026-09-20-horizon-backend-design.md`). Next.js proxies `/api/*` to the API. Frontend paths below are relative to `web/`.
+The repo has two apps: `web/` (Next.js, UI only) and `backend/` (Spring Boot, built slice by slice to the spec in `docs/superpowers/specs/2026-09-20-horizon-backend-design.md`). Next.js proxies `/api/*` to the API. Frontend paths below are relative to `web/`.
 
 **Routing (`app/`)** uses two route groups with separate layouts:
 - `(auth)` holds `sign-in` and `sign-up`, both rendering the shared `components/AuthForm.tsx` with a `type` prop of `'sign-in'` or `'sign-up'`.
@@ -56,7 +56,7 @@ The repo has two apps: `web/` (Next.js, UI only) and `api/` (Spring Boot backend
 
 **Frontend is not wired to the backend yet.**
 - `lib/actions/user.action.ts` has stub `signIn`/`signUp` that do nothing (the `'use server'` directive typo was fixed in commit 4ca18bc).
-- `types/index.d.ts` declares global ambient types (`User`, `Account`, `Transaction`, `SignUpParams`, ...) with no imports needed. Their fields (`$id`, `appwriteItemId`, `dwollaCustomerId`, Plaid-style account fields) and the comments in `AuthForm` come from an abandoned Appwrite/Plaid/Dwolla plan. The backend is now the Spring Boot service in `api/`; these types and comments are replaced when the frontend is wired to it.
+- `types/index.d.ts` declares global ambient types (`User`, `Account`, `Transaction`, `SignUpParams`, ...) with no imports needed. Their fields (`$id`, `appwriteItemId`, `dwollaCustomerId`, Plaid-style account fields) and the comments in `AuthForm` come from an abandoned Appwrite/Plaid/Dwolla plan. The backend is now the Spring Boot service in `backend/`; these types and comments are replaced when the frontend is wired to it.
 - Pages currently use hardcoded mock data (for example `loggedIn` in `app/(root)/layout.tsx` and `app/(root)/page.tsx`, and fake balances passed to `TotalBalanceBox` and `RightSideBar`). Replace it rather than building on it.
 
 **Styling.**

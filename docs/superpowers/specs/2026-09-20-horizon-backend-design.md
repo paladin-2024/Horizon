@@ -21,7 +21,7 @@ Modular monolith: one Spring Boot 4.1 app (Java 21, Maven; start.spring.io no lo
 ```
 Horizon/
 ├── web/                      Next.js, UI only (moved from repo root)
-├── api/                      Spring Boot
+├── backend/                  Spring Boot
 │   └── src/main/java/com/horizon/
 │       ├── common/           Money, errors, security config
 │       ├── auth/             register, login, SMS OTP, JWT
@@ -121,7 +121,7 @@ JUnit 5 against a real local PostgreSQL 17 test database (`horizon_test`); the d
 
 Each slice is a `feat/` branch and a PR into `dev`.
 
-1. Restructure: move the app into `web/`, add the `api/` skeleton with the Maven Wrapper and a local setup guide. No UI edits.
+1. Restructure: move the app into `web/`, add the `backend/` skeleton with the Maven Wrapper and a local setup guide. No UI edits.
 2. Auth: register, OTP, login, refresh, logout, rate limiting, cleanup job; wire the auth forms.
 3. Institutions, linked accounts and the `BankProvider` interface.
 4. Transactions and CSV import.

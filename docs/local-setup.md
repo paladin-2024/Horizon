@@ -19,31 +19,31 @@ createdb -p 5433 horizon_test
 
 | Variable | Default | Used by |
 |---|---|---|
-| `DB_URL` | `jdbc:postgresql://localhost:5433/horizon` | api |
-| `DB_USER` | your OS user | api |
-| `DB_PASSWORD` | empty | api |
-| `TEST_DB_URL` | `jdbc:postgresql://localhost:5433/horizon_test` | api tests |
+| `DB_URL` | `jdbc:postgresql://localhost:5433/horizon` | backend |
+| `DB_USER` | your OS user | backend |
+| `DB_PASSWORD` | empty | backend |
+| `TEST_DB_URL` | `jdbc:postgresql://localhost:5433/horizon_test` | backend tests |
 | `API_URL` | `http://localhost:8080` | web proxy |
 
-Secrets go in environment variables or in `api/config/application-local.yml` (gitignored; Spring Boot reads `./config/` from the working directory, so run from `api/`, and activate it with `SPRING_PROFILES_ACTIVE=local`). Never put secrets under `src/main/resources`: everything there is packaged into the jar.
+Secrets go in environment variables or in `backend/config/application-local.yml` (gitignored; Spring Boot reads `./config/` from the working directory, so run from `backend/`, and activate it with `SPRING_PROFILES_ACTIVE=local`). Never put secrets under `src/main/resources`: everything there is packaged into the jar.
 
 ## Run
 
 ```bash
-cd api && ./mvnw spring-boot:run      # http://localhost:8080/actuator/health
+cd backend && ./mvnw spring-boot:run  # http://localhost:8080/actuator/health
 cd web && npm install && npm run dev  # http://localhost:3000, /api/* is proxied to the API
 ```
 
-The API's GC log is written to `api/target/gc.log`.
+The API's GC log is written to `backend/target/gc.log`.
 
 Next.js bakes `API_URL` in at build time (`next build` evaluates the rewrite), so a production build needs `API_URL` set when it is built.
 
-If port 8080 is already in use on your machine, run `SERVER_PORT=8081 ./mvnw spring-boot:run` from `api/` and `API_URL=http://localhost:8081 npm run dev` from `web/`. The health URL is then `http://localhost:8081/actuator/health`.
+If port 8080 is already in use on your machine, run `SERVER_PORT=8081 ./mvnw spring-boot:run` from `backend/` and `API_URL=http://localhost:8081 npm run dev` from `web/`. The health URL is then `http://localhost:8081/actuator/health`.
 
 ## Test
 
 ```bash
-cd api
+cd backend
 ./mvnw test                                                   # all tests
 ./mvnw test -Dtest=HealthEndpointTest                         # one class
 ./mvnw test -Dtest=HealthEndpointTest#healthIsPublicAndUp     # one method

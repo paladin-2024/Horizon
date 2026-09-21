@@ -42,7 +42,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# api (Spring Boot)
+# backend (Spring Boot)
 target/
 logs/
 HELP.md
