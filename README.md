@@ -39,6 +39,8 @@ A modern, high‑performance web application starter with a delightful developer
 
 ## 🚀 Quick Start
 
+For setup instructions, see [docs/local-setup.md](docs/local-setup.md).
+
 - Prerequisites
   - Node.js 18+ and npm
   - Git

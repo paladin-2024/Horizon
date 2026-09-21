@@ -1,6 +1,6 @@
 # Local setup
 
-Requires Java 21, PostgreSQL 17 and Node 18+. There is no Docker and no Maven install: use the wrapper (`./mvnw`).
+Requires Java 21, PostgreSQL 17 and Node 18.18+. There is no Docker and no Maven install: use the wrapper (`./mvnw`).
 
 ## PostgreSQL 17
 
@@ -25,7 +25,7 @@ createdb -p 5433 horizon_test
 | `TEST_DB_URL` | `jdbc:postgresql://localhost:5433/horizon_test` | api tests |
 | `API_URL` | `http://localhost:8080` | web proxy |
 
-Secrets go in environment variables or in `api/src/main/resources/application-local.yml` (gitignored; activate with `SPRING_PROFILES_ACTIVE=local`).
+Secrets go in environment variables or in `api/config/application-local.yml` (gitignored; Spring Boot reads `./config/` from the working directory, so run from `api/`, and activate it with `SPRING_PROFILES_ACTIVE=local`). Never put secrets under `src/main/resources`: everything there is packaged into the jar.
 
 ## Run
 
@@ -36,7 +36,9 @@ cd web && npm install && npm run dev  # http://localhost:3000, /api/* is proxied
 
 The API's GC log is written to `api/target/gc.log`.
 
-If port 8080 is already in use on your machine, start the API with `SERVER_PORT=8081 ./mvnw spring-boot:run` and start the frontend with `API_URL=http://localhost:8081 npm run dev`.
+Next.js bakes `API_URL` in at build time (`next build` evaluates the rewrite), so a production build needs `API_URL` set when it is built.
+
+If port 8080 is already in use on your machine, run `SERVER_PORT=8081 ./mvnw spring-boot:run` from `api/` and `API_URL=http://localhost:8081 npm run dev` from `web/`. The health URL is then `http://localhost:8081/actuator/health`.
 
 ## Test
 

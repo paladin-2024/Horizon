@@ -33,7 +33,7 @@ cd api
 ./mvnw test -Dtest=HealthEndpointTest#healthIsPublicAndUp     # single test
 ```
 
-Config comes from env vars (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `TEST_DB_URL`, `API_URL`). `.env*` and `application-local.yml` are gitignored.
+Config comes from env vars (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `TEST_DB_URL`, `API_URL`). `.env*` (except a committed `.env.example`) and `application-local.yml` (put it in `api/config/`) are gitignored.
 
 ## Git workflow
 
@@ -55,7 +55,7 @@ The repo has two apps: `web/` (Next.js, UI only) and `api/` (Spring Boot backend
 **Auth form flow.** `AuthForm` is a single client component for both sign-in and sign-up. The zod schema comes from `authFormSchema(type)` in `lib/utils.ts`. It makes the sign-up-only fields optional when `type === 'sign-in'`. Adding a sign-up field means changing the schema, the `SignUpParams` type, and the JSX in `AuthForm` together. `AuthForm` calls `signIn` and `signUp` from `lib/actions/user.action.ts`.
 
 **Frontend is not wired to the backend yet.**
-- `lib/actions/user.action.ts` has stub `signIn`/`signUp` that do nothing. Its directive reads `'user server'`, which is a typo for `'use server'`, so it is not currently a server-action module. Fix it when implementing.
+- `lib/actions/user.action.ts` has stub `signIn`/`signUp` that do nothing (the `'use server'` directive typo was fixed in commit 4ca18bc).
 - `types/index.d.ts` declares global ambient types (`User`, `Account`, `Transaction`, `SignUpParams`, ...) with no imports needed. Their fields (`$id`, `appwriteItemId`, `dwollaCustomerId`, Plaid-style account fields) and the comments in `AuthForm` come from an abandoned Appwrite/Plaid/Dwolla plan. The backend is now the Spring Boot service in `api/`; these types and comments are replaced when the frontend is wired to it.
 - Pages currently use hardcoded mock data (for example `loggedIn` in `app/(root)/layout.tsx` and `app/(root)/page.tsx`, and fake balances passed to `TotalBalanceBox` and `RightSideBar`). Replace it rather than building on it.
 
