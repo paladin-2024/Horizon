@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.boot.test.context.TestComponent;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,6 +64,14 @@ public class ProbeController {
     @GetMapping("/boom")
     void boom() {
         throw new IllegalStateException("secret internal detail");
+    }
+
+    @GetMapping("/stale")
+    void stale(@RequestParam(defaultValue = "plain") String kind) {
+        if ("object".equals(kind)) {
+            throw new ObjectOptimisticLockingFailureException(Object.class, "id");
+        }
+        throw new OptimisticLockingFailureException("row changed");
     }
 
     @GetMapping("/request-id")
