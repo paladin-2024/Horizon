@@ -1,5 +1,6 @@
 package com.horizon.support;
 
+import com.horizon.common.audit.AuditLog;
 import com.horizon.common.error.ApiException;
 import com.horizon.common.security.CurrentUser;
 import jakarta.validation.Valid;
@@ -32,6 +33,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProbeController {
 
     private static final Logger log = LoggerFactory.getLogger(ProbeController.class);
+
+    private final AuditLog auditLog;
+
+    public ProbeController(AuditLog auditLog) {
+        this.auditLog = auditLog;
+    }
 
     public record ProbeBody(@NotBlank String name, @Min(1) int quantity) {
     }
@@ -72,6 +79,12 @@ public class ProbeController {
             throw new ObjectOptimisticLockingFailureException(Object.class, "id");
         }
         throw new OptimisticLockingFailureException("row changed");
+    }
+
+    @PostMapping("/audit")
+    Map<String, Object> audit() {
+        auditLog.record(CurrentUser.id(), "probe.audit", Map.of("source", "probe"));
+        return Map.of("ok", true);
     }
 
     @GetMapping("/request-id")
