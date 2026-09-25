@@ -1,5 +1,7 @@
 # Restructure into web/ and api/ Implementation Plan
 
+*Note (2026-09-21): after this plan was executed the `api/` directory was renamed to `backend/`; paths below are as executed.*
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Move the existing Next.js app into `web/` with zero UI change, add a runnable Spring Boot `api/` skeleton (health endpoint, deny-by-default security, real-Postgres test), proxy `/api/*` from Next.js to it, and update the docs.

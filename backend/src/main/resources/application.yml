@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: horizon
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/horizon}
+    username: ${DB_USER:${USER:postgres}}
+    password: ${DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update # dev and test only; staging and production override to validate when Flyway lands
+  flyway:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: never
+
+# forward-headers-strategy is intentionally unset: it must be decided together with the auth plan
+# (X-Forwarded-For trust) — do not enable it while the API port is directly reachable, a client could spoof the header
+server:
+  shutdown: graceful

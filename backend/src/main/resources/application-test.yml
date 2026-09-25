@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:5433/horizon_test}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

@@ -8,17 +8,32 @@ Horizon is a banking dashboard (Next.js 15 App Router, React 19, TypeScript, Tai
 
 ## Commands
 
+The repo has two apps. Local setup (PostgreSQL 17 on port 5433, no Docker) is in `docs/local-setup.md`.
+
+Frontend (`web/`):
+
 ```bash
+cd web
 npm install
-npm run dev      # next dev --turbopack
+npm run dev      # next dev --turbopack, http://localhost:3000
 npm run build
 npm run start
 npm run lint     # next lint (eslint 9 flat config: next/core-web-vitals + next/typescript)
+npx tsc --noEmit # type-check
 ```
 
-There is no test runner or test script configured. Type-check with `npx tsc --noEmit`.
+There is no frontend test runner.
 
-`.env*` is gitignored. No environment variables are read by the code yet.
+Backend (`backend/`, Spring Boot 4.1, Java 21, Maven Wrapper):
+
+```bash
+cd backend
+./mvnw spring-boot:run                                        # http://localhost:8080
+./mvnw test                                                   # all tests, real PostgreSQL test DB (horizon_test)
+./mvnw test -Dtest=HealthEndpointTest#healthIsPublicAndUp     # single test
+```
+
+Config comes from env vars (`DB_URL`, `DB_USER`, `DB_PASSWORD`, `TEST_DB_URL`, `API_URL`). `.env*` (except a committed `.env.example`) and `application-local.yml` (put it in `backend/config/`) are gitignored.
 
 ## Git workflow
 
@@ -29,6 +44,8 @@ There is no test runner or test script configured. Type-check with `npx tsc --no
 
 ## Architecture
 
+The repo has two apps: `web/` (Next.js, UI only) and `backend/` (Spring Boot, built slice by slice to the spec in `docs/superpowers/specs/2026-09-20-horizon-backend-design.md`). Next.js proxies `/api/*` to the API. Frontend paths below are relative to `web/`.
+
 **Routing (`app/`)** uses two route groups with separate layouts:
 - `(auth)` holds `sign-in` and `sign-up`, both rendering the shared `components/AuthForm.tsx` with a `type` prop of `'sign-in'` or `'sign-up'`.
 - `(root)` is the authenticated app shell. Its `layout.tsx` renders `Sidebar` (desktop) and `MobileNav` (mobile), with the page in `children`. Routes: `/`, `/my-banks`, `/transaction-history`, `/payment-transfer`.
@@ -37,9 +54,9 @@ There is no test runner or test script configured. Type-check with `npx tsc --no
 
 **Auth form flow.** `AuthForm` is a single client component for both sign-in and sign-up. The zod schema comes from `authFormSchema(type)` in `lib/utils.ts`. It makes the sign-up-only fields optional when `type === 'sign-in'`. Adding a sign-up field means changing the schema, the `SignUpParams` type, and the JSX in `AuthForm` together. `AuthForm` calls `signIn` and `signUp` from `lib/actions/user.action.ts`.
 
-**Backend is not implemented.**
-- `lib/actions/user.action.ts` has stub `signIn`/`signUp` that do nothing. Its directive reads `'user server'`, which is a typo for `'use server'`, so it is not currently a server-action module. Fix it when implementing.
-- `types/index.d.ts` declares global ambient types (`User`, `Account`, `Transaction`, `SignUpParams`, ...) with no imports needed. Their fields (`$id`, `appwriteItemId`, `dwollaCustomerId`, Plaid-style account fields) and the comments in `AuthForm` show the intended stack: Appwrite for auth and database, Plaid for bank linking, Dwolla for transfers. None of these are installed.
+**Frontend is not wired to the backend yet.**
+- `lib/actions/user.action.ts` has stub `signIn`/`signUp` that do nothing (the `'use server'` directive typo was fixed in commit 4ca18bc).
+- `types/index.d.ts` declares global ambient types (`User`, `Account`, `Transaction`, `SignUpParams`, ...) with no imports needed. Their fields (`$id`, `appwriteItemId`, `dwollaCustomerId`, Plaid-style account fields) and the comments in `AuthForm` come from an abandoned Appwrite/Plaid/Dwolla plan. The backend is now the Spring Boot service in `backend/`; these types and comments are replaced when the frontend is wired to it.
 - Pages currently use hardcoded mock data (for example `loggedIn` in `app/(root)/layout.tsx` and `app/(root)/page.tsx`, and fake balances passed to `TotalBalanceBox` and `RightSideBar`). Replace it rather than building on it.
 
 **Styling.**
@@ -48,7 +65,7 @@ There is no test runner or test script configured. Type-check with `npx tsc --no
 - `components/ui/*` is shadcn/ui (style `default`, base color `slate`, RSC on, lucide icons; see `components.json`). Add primitives with the shadcn CLI rather than by hand.
 - Use `cn()` from `lib/utils.ts` (clsx + tailwind-merge) to combine classes.
 
-**Path alias:** `@/*` maps to the repo root, for example `@/components/...` and `@/lib/...`.
+**Path alias:** `@/*` maps to `web/`, for example `@/components/...` and `@/lib/...`.
 
 **Other helpers in `lib/utils.ts`:** `formatAmount` (USD), `formatDateTime`, `countTransactionCategories`, `getAccountTypeColors`, `encryptId`/`decryptId` (base64 only, not real encryption), `formUrlQuery`.
 
