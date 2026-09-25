@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import BankCard from "./BankCard";
+import Icon from "./Icon";
+import PlusSignIcon from "@hugeicons/core-free-icons/PlusSignIcon";
 
 const RightSideBar = ({ user, transactions, banks }: RightSidebarProps) => {
   return (
@@ -26,7 +27,7 @@ const RightSideBar = ({ user, transactions, banks }: RightSidebarProps) => {
           <div className="flex w-full justify-between">
             <h2 className="header-2">My Banks</h2>
             <Link href="/" className="flex gap-2">
-              <Image src="/icons/plus.svg" width={20} height={20} alt="plus" />
+              <Icon icon={PlusSignIcon} size={18} className="text-gray-600" />
               <h2 className="text-14 font-semibold text-gray-600">Add Bank</h2>
             </Link>
           </div>

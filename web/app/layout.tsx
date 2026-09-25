@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import {Inter, IBM_Plex_Serif } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable:'--font-inter'});
-const ibmPlexSerif = IBM_Plex_Serif({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight:['400', '700'],
-  variable: '--font-ibm-plex-serif'
-})
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-sans",
+});
 
 
 export const metadata: Metadata = {
@@ -24,9 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${ibmPlexSerif.variable}`}      >
+    <html lang="en" className={plusJakartaSans.variable}>
+      <body>
         {children}
       </body>
     </html>

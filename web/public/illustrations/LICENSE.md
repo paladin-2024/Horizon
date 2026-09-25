@@ -1,0 +1,1 @@
+Illustrations in this folder are from [unDraw](https://undraw.co) (sourced via the `undraw-svg` npm package, MIT). unDraw's own license permits free use, including commercial, with no attribution required. Kept at their native colors rather than recolored to the brand palette, to avoid breaking the shading/contrast built into each illustration.

@@ -1,15 +1,16 @@
 import Image from 'next/image'
 import Sidebar from "@/components/Sidebar";
 import MobileNav from '@/components/MobileNav';
+import { mockCurrentUser } from '@/lib/session';
 export default function RootLayout({
 children,
 }: Readonly<{
 children: React.ReactNode;
 }>) {
-    const loggedIn = {firstName:'Nzabanita', lastName:'Caleb'};
+    const loggedIn = mockCurrentUser;
 
 return (
-    <main className="flex h-screen w-full font-inter ">
+    <main className="flex h-screen w-full font-sans ">
         <Sidebar user={loggedIn}/>
         
         <div className="flex size-full flex-col">
