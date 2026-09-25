@@ -4,7 +4,7 @@ import AuthIllustrationPanel from '@/components/AuthIllustrationPanel'
 function SignUp() {
   return (
     <section className='flex min-h-screen w-full'>
-      <div className='flex-center flex-1 max-sm:px-6'>
+      <div className='flex-center w-full max-sm:px-6 lg:w-1/2'>
         <AuthForm type="sign-up"/>
       </div>
       <AuthIllustrationPanel
