@@ -25,3 +25,8 @@ management:
 # (X-Forwarded-For trust) — do not enable it while the API port is directly reachable, a client could spoof the header
 server:
   shutdown: graceful
+
+logging:
+  structured:
+    format:
+      console: ecs
