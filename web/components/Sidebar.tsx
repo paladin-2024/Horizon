@@ -4,6 +4,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {cn} from '@/lib/utils'
 import {usePathname} from 'next/navigation'
+import Icon from './Icon'
+import { Avatar, AvatarFallback } from './ui/avatar'
+
 const Sidebar = ({user }:SiderbarProps) => {
     const pathname=usePathname();
     return (
@@ -16,7 +19,7 @@ const Sidebar = ({user }:SiderbarProps) => {
                 height={34}
                 alt='Horizon logo'
                 className="size-[24px]
-                max-xl:size-14"
+                max-lg:size-14"
             />
             <h1 className='sidebar-logo'>Horizon</h1>
             </Link>
@@ -30,14 +33,11 @@ const Sidebar = ({user }:SiderbarProps) => {
                         'bg-bank-gradient':isActive
                     })}
                 >
-                    <div className='relative size-6'>
-                        <Image
-                        src={item.imgURL}
-                        alt={item.label}
-                        fill
-                        className={cn({'brightness-[3] invert-0':isActive})}
-                        />
-                    </div>
+                    <Icon
+                        icon={item.icon}
+                        size={22}
+                        className={cn('text-black-2', {'text-white': isActive})}
+                    />
                     <p className={cn('sidebar-label',{
                         '!text-white':isActive
                     })}>
@@ -46,9 +46,20 @@ const Sidebar = ({user }:SiderbarProps) => {
                 </Link>
             )})}
 
-            USER
         </nav>
-        FOOTER
+        <div className="flex items-center justify-center gap-3 border-t border-gray-200 pt-4 lg:justify-start">
+            <Avatar className="size-10 shrink-0">
+                <AvatarFallback className="bg-bank-gradient text-white font-semibold">
+                    {user.firstName?.[0]}
+                </AvatarFallback>
+            </Avatar>
+            <div className="footer_email min-w-0">
+                <p className="text-14 font-semibold text-black-2 truncate">
+                    {user.firstName} {user.lastName}
+                </p>
+                <p className="text-12 font-normal text-gray-500 truncate">{user.email}</p>
+            </div>
+        </div>
     </section>
     )
 }

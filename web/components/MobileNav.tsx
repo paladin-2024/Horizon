@@ -7,9 +7,13 @@ import{
   } from "@/components/ui/sheet"
 import { sidebarLinks } from "@/constants"
 import { cn } from "@/lib/utils"
-  import Image from "next/image"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Icon from "./Icon"
+import MenuIcon from "@hugeicons/core-free-icons/Menu01Icon"
+import { Avatar, AvatarFallback } from "./ui/avatar"
+
 const MobileNav = ({user}: MobileNavProps) => {
     const pathname=usePathname();
   return (
@@ -17,17 +21,11 @@ const MobileNav = ({user}: MobileNavProps) => {
         <Sheet>
 
             <SheetTrigger>
-                <Image
-                src="/icons/hamburger.svg"
-                width={30}
-                height={30}
-                alt="menu"
-                className="cursor-pointer"
-                />
+                <Icon icon={MenuIcon} size={28} className="cursor-pointer text-black-2" />
             </SheetTrigger>
 
             <SheetContent side="left" className="bordern-one bg-white">
-                
+
             <Link  href="/" className='cursor-pointer flex items-center gap-1 px-4'>
             <Image
                 src="/icons/logo.svg"
@@ -35,7 +33,7 @@ const MobileNav = ({user}: MobileNavProps) => {
                 height={34}
                 alt='Horizon logo'
             />
-            <h1 className='text-26 font-ibm-plex-serif font-bold text-black-1'>Horizon</h1>
+            <h1 className='text-26 font-sans font-bold text-black-1'>Horizon</h1>
             </Link>
 
             <div className="mobilenav-sheet">
@@ -51,12 +49,11 @@ const MobileNav = ({user}: MobileNavProps) => {
                                         'bg-bank-gradient':isActive
                                     })}>
 
-                                    <Image
-                                    src={item.imgURL}
-                                    alt={item.label}
-                                    width={20}
-                                    height={20}
-                                    className={cn({'brightness-[3] invert-0':isActive})}/>
+                                    <Icon
+                                        icon={item.icon}
+                                        size={20}
+                                        className={cn({'text-white': isActive})}
+                                    />
                                     <p className={cn('text-16 font-semibold text-black-2',{
                                         'text-white':isActive
                                     })}>
@@ -66,11 +63,21 @@ const MobileNav = ({user}: MobileNavProps) => {
                             </SheetClose>
                         )})}
 
-                        USER
+                        <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
+                            <Avatar className="size-10 shrink-0">
+                                <AvatarFallback className="bg-bank-gradient text-white font-semibold">
+                                    {user.firstName?.[0]}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                                <p className="text-14 font-semibold text-black-2 truncate">
+                                    {user.firstName} {user.lastName}
+                                </p>
+                                <p className="text-12 font-normal text-gray-500 truncate">{user.email}</p>
+                            </div>
+                        </div>
                     </nav>
                 </SheetClose>
-
-                FOOTER
             </div>
             </SheetContent>
         </Sheet>

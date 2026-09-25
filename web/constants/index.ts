@@ -1,21 +1,26 @@
+import Home09Icon from "@hugeicons/core-free-icons/Home09Icon";
+import BankIcon from "@hugeicons/core-free-icons/BankIcon";
+import ReceiptDollarIcon from "@hugeicons/core-free-icons/ReceiptDollarIcon";
+import SentIcon from "@hugeicons/core-free-icons/SentIcon";
+
 export const sidebarLinks = [
   {
-    imgURL: "/icons/home.svg",
+    icon: Home09Icon,
     route: "/",
     label: "Home",
   },
   {
-    imgURL: "/icons/dollar-circle.svg",
+    icon: BankIcon,
     route: "/my-banks",
     label: "My Banks",
   },
   {
-    imgURL: "/icons/transaction.svg",
+    icon: ReceiptDollarIcon,
     route: "/transaction-history",
     label: "Transaction History",
   },
   {
-    imgURL: "/icons/money-send.svg",
+    icon: SentIcon,
     route: "/payment-transfer",
     label: "Transfer Funds",
   },
