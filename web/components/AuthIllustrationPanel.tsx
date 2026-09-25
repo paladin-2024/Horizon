@@ -12,7 +12,7 @@ interface AuthIllustrationPanelProps {
  */
 const AuthIllustrationPanel = ({ illustration, headline, tagline }: AuthIllustrationPanelProps) => {
   return (
-    <div className="relative hidden flex-1 flex-col items-center justify-center gap-8 overflow-hidden bg-sky-1 p-12 lg:flex">
+    <div className="relative hidden flex-1 flex-col items-center justify-center gap-8 overflow-hidden bg-sky-1 p-12 lg:flex lg:sticky lg:top-0 lg:h-screen">
       <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-bankGradient/25 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -left-16 size-80 rounded-full bg-pink-500/20 blur-3xl" />
       <div className="pointer-events-none absolute left-1/3 top-1/4 size-64 rounded-full bg-indigo-500/15 blur-3xl" />
