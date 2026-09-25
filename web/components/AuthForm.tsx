@@ -79,11 +79,14 @@ const AuthForm = ({ type }:{ type: string}) => {
         </header>
 
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 {type === 'sign-up' && (
                     <>
-                        <div className="flex flex-col gap-3">
-                            <p className="text-14 font-semibold text-gray-500">Personal details</p>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-14 flex items-center gap-2 font-semibold text-gray-500">
+                                <span className="size-1.5 rounded-full bg-bankGradient" />
+                                Personal details
+                            </p>
                             <div className="flex gap-4">
                                 <CustomInput
                                     control={form.control}
@@ -119,8 +122,11 @@ const AuthForm = ({ type }:{ type: string}) => {
 
                         <Separator />
 
-                        <div className="flex flex-col gap-3">
-                            <p className="text-14 font-semibold text-gray-500">Address</p>
+                        <div className="flex flex-col gap-2">
+                            <p className="text-14 flex items-center gap-2 font-semibold text-gray-500">
+                                <span className="size-1.5 rounded-full bg-bankGradient" />
+                                Address
+                            </p>
                             <CustomInput
                                 control={form.control}
                                 name='address1'
@@ -154,7 +160,10 @@ const AuthForm = ({ type }:{ type: string}) => {
 
                         <Separator />
 
-                        <p className="text-14 font-semibold text-gray-500">Sign-in details</p>
+                        <p className="text-14 flex items-center gap-2 font-semibold text-gray-500">
+                            <span className="size-1.5 rounded-full bg-bankGradient" />
+                            Account credentials
+                        </p>
                     </>
                 )}
 

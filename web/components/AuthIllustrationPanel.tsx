@@ -12,9 +12,19 @@ interface AuthIllustrationPanelProps {
  */
 const AuthIllustrationPanel = ({ illustration, headline, tagline }: AuthIllustrationPanelProps) => {
   return (
-    <div className="hidden flex-1 flex-col items-center justify-center gap-8 bg-sky-1 p-12 lg:flex">
-      <Image src={illustration} alt="" width={420} height={310} className="h-auto w-full max-w-[420px]" />
-      <div className="max-w-md text-center">
+    <div className="relative hidden flex-1 flex-col items-center justify-center gap-8 overflow-hidden bg-sky-1 p-12 lg:flex">
+      <div className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-bankGradient/25 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -left-16 size-80 rounded-full bg-pink-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute left-1/3 top-1/4 size-64 rounded-full bg-indigo-500/15 blur-3xl" />
+
+      <Image
+        src={illustration}
+        alt=""
+        width={420}
+        height={310}
+        className="auth-illustration relative z-10 h-auto w-full max-w-[420px] drop-shadow-xl"
+      />
+      <div className="relative z-10 max-w-md text-center">
         <h2 className="text-20 font-semibold text-gray-900">{headline}</h2>
         <p className="text-14 mt-2 text-gray-600">{tagline}</p>
       </div>

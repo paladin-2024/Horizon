@@ -34,6 +34,24 @@
   box-sizing: border-box;
 }
 
+/* One deliberate moment of motion on the auth screens: the illustration drifts
+   gently rather than sitting static against the gradient backdrop. */
+@media (prefers-reduced-motion: no-preference) {
+  .auth-illustration {
+    animation: auth-illustration-float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes auth-illustration-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
