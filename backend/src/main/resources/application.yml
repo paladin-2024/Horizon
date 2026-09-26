@@ -43,3 +43,18 @@ horizon:
     cron: "0 */10 * * * *"
   rate-limit:
     sweep-interval-ms: 300000
+  auth:
+    jwt-secret: ${HORIZON_JWT_SECRET}
+    jwt-kid: ${HORIZON_JWT_KID:k1}
+    issuer: horizon
+    access-token-ttl: 15m
+    refresh-token-ttl: 30d
+    otp-ttl: 5m
+    otp-max-attempts: 5
+    otp-pepper: ${HORIZON_OTP_PEPPER}
+  security:
+    encryption-key: ${HORIZON_ENCRYPTION_KEY}
+    # Trust the first X-Forwarded-For hop only when the API is reachable through the Next.js proxy alone.
+    # Leave false anywhere the API port can be reached directly, or a client can spoof its IP and
+    # defeat the login and OTP limits. Local development turns it on (docs/local-setup.md).
+    trust-forwarded-for: false

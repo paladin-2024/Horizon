@@ -8,3 +8,15 @@ spring:
 horizon:
   purge:
     cron: "-"
+  auth:
+    jwt-secret: vcS0bgFXwWRMQnKuOymNCqfCG/j6j9LsMkcZD16WexY=
+    jwt-kid: test
+    issuer: horizon
+    access-token-ttl: 15m
+    refresh-token-ttl: 30d
+    otp-ttl: 5m
+    otp-max-attempts: 5
+    otp-pepper: X+Bf7kXl8XtuCp4zokxFm3Tzandf4dApqApKKzLnmoU=
+  security:
+    encryption-key: DZG80TXTLl7u7+M/teXwZWlAdSBeBJfsrQ52iaJ0o9Q=
+    trust-forwarded-for: true
