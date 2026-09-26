@@ -1,11 +1,15 @@
 package com.horizon.auth;
 
+import com.horizon.common.error.ApiException;
 import com.horizon.common.idempotency.Idempotent;
+import com.horizon.common.security.CurrentUser;
+import com.horizon.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +22,14 @@ class AuthController {
     private final AuthService authService;
     private final TokenCookies tokenCookies;
     private final ClientIp clientIp;
+    private final UserService userService;
 
-    AuthController(AuthService authService, TokenCookies tokenCookies, ClientIp clientIp) {
+    AuthController(AuthService authService, TokenCookies tokenCookies, ClientIp clientIp,
+            UserService userService) {
         this.authService = authService;
         this.tokenCookies = tokenCookies;
         this.clientIp = clientIp;
+        this.userService = userService;
     }
 
     @PostMapping("/register")
@@ -69,5 +76,13 @@ class AuthController {
         authService.logout(TokenCookies.read(httpRequest, TokenCookies.REFRESH_COOKIE).orElse(null));
         tokenCookies.clear(httpRequest, httpResponse);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/me")
+    MeResponse me() {
+        return userService.findById(CurrentUser.id())
+                .map(MeResponse::from)
+                .orElseThrow(() -> ApiException.unauthorized("unauthenticated",
+                        "Sign in to continue."));
     }
 }

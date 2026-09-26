@@ -1,6 +1,7 @@
 package com.horizon.common.security;
 
 import com.horizon.auth.CsrfHeaderFilter;
+import com.horizon.auth.JwtAuthenticationFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +32,18 @@ public class SecurityConfig {
         return registration;
     }
 
+    /** Same reason as {@link #disableAutomaticCsrfHeaderFilterRegistration}: also a {@code @Component}. */
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, CsrfHeaderFilter csrfHeaderFilter)
-            throws Exception {
+    FilterRegistrationBean<JwtAuthenticationFilter> disableAutomaticJwtAuthenticationFilterRegistration(
+            JwtAuthenticationFilter filter) {
+        FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http, CsrfHeaderFilter csrfHeaderFilter,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return http
                 // Spring's synchronizer token does not fit a stateless API; CsrfHeaderFilter is the
                 // defense instead (see the contracts: X-Horizon-Client on state-changing requests).
@@ -54,6 +64,7 @@ public class SecurityConfig {
                                 "/api/v1/auth/logout").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(csrfHeaderFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> e.authenticationEntryPoint(
                         new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .build();
