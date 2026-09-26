@@ -7,21 +7,8 @@ declare type SearchParamProps = {
 
 // ========================================
 
-declare type User = {
-  $id: string;
-  email: string;
-  userId: string;
-  dwollaCustomerUrl: string;
-  dwollaCustomerId: string;
-  firstName: string;
-  lastName: string;
-  address1: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  dateOfBirth: string;
-  ssn: string;
-};
+// The signed-in user is the API's GET /auth/me response (see api-auth.d.ts).
+declare type User = ApiUser;
 
 declare type Account = {
   id: string;
