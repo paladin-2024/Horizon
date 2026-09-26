@@ -1,30 +1,27 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { ACCESS_COOKIE, PATH_HEADER, routeDecision } from "@/lib/session";
 
-// Placeholder session check until real auth is wired (see docs/superpowers/plans-draft/
-// 03-auth.md and 06-web-auth.md). `hz_access` is the cookie name the real backend will set;
-// today it never exists, so every visit to a protected page redirects to sign-in.
-const SESSION_COOKIE = "hz_access";
-const PUBLIC_PATHS = ["/sign-in", "/sign-up"];
-
+// Decides only from the presence of the hz_access cookie. It cannot verify the
+// JWT (the signing key is in the API), so this is a redirect convenience: the
+// (root) layout and the API itself do the real check.
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const isPublicPath = PUBLIC_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`)
-  );
-  const hasSession = request.cookies.has(SESSION_COOKIE);
+  const { pathname, search, searchParams } = request.nextUrl;
 
-  if (!hasSession && !isPublicPath) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
-  }
+  const target = routeDecision({
+    pathname,
+    hasAccessCookie: request.cookies.has(ACCESS_COOKIE),
+    sessionExpired: searchParams.get("session") === "expired",
+  });
+  if (target) return NextResponse.redirect(new URL(target, request.url));
 
-  if (hasSession && isPublicPath) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
+  // Server components cannot see the URL; pass it along for the (root) layout.
+  const headers = new Headers(request.headers);
+  headers.set(PATH_HEADER, `${pathname}${search}`);
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|icons|.*\\..*).*)"],
+  // Everything except the API proxy, Next internals, and files with an extension
+  // (public/icons, images, favicon).
+  matcher: ["/((?!api|_next/static|_next/image|.*\\..*).*)"],
 };
