@@ -42,4 +42,20 @@ interface IdempotencyKeyRepository extends JpaRepository<IdempotencyKey, UUID> {
                     """,
             nativeQuery = true)
     int deleteExpiredBatch(@Param("now") Instant now, @Param("batchSize") int batchSize);
+
+    /**
+     * Puts a row back into the in-flight state with an already expired lock. Used to reproduce a
+     * request whose process died before it could complete or release the key.
+     */
+    @Modifying(clearAutomatically = true)
+    @Query("""
+            update IdempotencyKey k
+               set k.status = com.horizon.common.idempotency.IdempotencyStatus.IN_PROGRESS,
+                   k.responseStatus = null,
+                   k.responseBody = null,
+                   k.lockedUntil = :lockedUntil
+             where k.id = :id
+            """)
+    @org.springframework.transaction.annotation.Transactional
+    int markInProgressWithExpiredLock(@Param("id") UUID id, @Param("lockedUntil") Instant lockedUntil);
 }
