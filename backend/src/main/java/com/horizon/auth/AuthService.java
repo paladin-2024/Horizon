@@ -8,6 +8,7 @@ import com.horizon.user.NewUser;
 import com.horizon.user.UserCredentials;
 import com.horizon.user.UserService;
 import com.horizon.user.UserView;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +25,14 @@ class AuthService {
     }
 
     private static final String INVALID_OTP_MESSAGE = "That code is invalid or has expired.";
+    private static final String INVALID_CREDENTIALS_MESSAGE = "Those details do not match an account.";
+
+    /**
+     * A real Argon2id hash of a password nobody has. Verifying it for an unknown identifier makes a
+     * failed login take the same time whether or not the account exists.
+     */
+    private static final String DUMMY_HASH =
+            "$argon2id$v=19$m=16384,t=2,p=1$EMybXn+G3QFwCbEXkXAe8w$ALGN65xt3T83GDTgRQs3muTG5H6v/KyCnA7fWzzuP94";
 
     private final UserService userService;
     private final OtpService otpService;
@@ -126,6 +135,67 @@ class AuthService {
                 .orElseThrow(() -> ApiException.unauthorized("unauthenticated", "Sign in again."));
         return new Session(MeResponse.from(user), jwtService.issueAccessToken(userId),
                 refreshTokenService.startFamily(userId));
+    }
+
+    /** Phone or email plus password. Every failure returns the same generic error. */
+    Session login(LoginRequest request, String clientIp) {
+        rateLimitGuard.check("login:ip:" + clientIp, RateLimitPolicies.LOGIN_PER_IP);
+        String identifier = request.identifier().trim();
+
+        Optional<UserCredentials> found = identifier.contains("@")
+                ? userService.findCredentialsByEmail(identifier.toLowerCase(Locale.ROOT))
+                : findByPhoneQuietly(identifier);
+
+        if (found.isEmpty()) {
+            passwordEncoder.matches(request.password(), DUMMY_HASH);
+            auditLog.record(null, "auth.login.failed", Map.of("reason", "unknown_identifier"));
+            throw ApiException.unauthorized("invalid_credentials", INVALID_CREDENTIALS_MESSAGE);
+        }
+
+        UserCredentials credentials = found.get();
+        rateLimitGuard.check("login:account:" + credentials.userId(),
+                RateLimitPolicies.LOGIN_PER_ACCOUNT);
+
+        if (!passwordEncoder.matches(request.password(), credentials.passwordHash())) {
+            auditLog.record(credentials.userId(), "auth.login.failed",
+                    Map.of("reason", "bad_password"));
+            throw ApiException.unauthorized("invalid_credentials", INVALID_CREDENTIALS_MESSAGE);
+        }
+        if (!credentials.phoneVerified()) {
+            auditLog.record(credentials.userId(), "auth.login.failed",
+                    Map.of("reason", "phone_not_verified"));
+            throw ApiException.forbidden("phone_not_verified",
+                    "Verify your phone number to finish signing in.");
+        }
+
+        auditLog.record(credentials.userId(), "auth.login", Map.of());
+        return startSession(credentials.userId());
+    }
+
+    /** Rotates the refresh token and mints a new access token. */
+    Session refresh(String presentedToken) {
+        RefreshTokenService.Rotation rotation = refreshTokenService.rotate(presentedToken);
+        UserView user = userService.findById(rotation.userId())
+                .orElseThrow(() -> ApiException.unauthorized("invalid_refresh_token",
+                        "Your session has expired. Sign in again."));
+        auditLog.record(rotation.userId(), "auth.refresh", Map.of());
+        return new Session(MeResponse.from(user), jwtService.issueAccessToken(rotation.userId()),
+                rotation.token());
+    }
+
+    /** Revokes the whole family behind the presented token. Unknown or missing tokens are fine. */
+    void logout(String presentedToken) {
+        refreshTokenService.revokeFamilyOf(presentedToken)
+                .ifPresent(userId -> auditLog.record(userId, "auth.logout", Map.of()));
+    }
+
+    /** An identifier that is not a supported phone number is simply an unknown account. */
+    private Optional<UserCredentials> findByPhoneQuietly(String identifier) {
+        try {
+            return userService.findCredentialsByPhone(PhoneNumbers.normalizeAny(identifier));
+        } catch (ApiException e) {
+            return Optional.empty();
+        }
     }
 
     private static String defaultLanguage(String country) {
