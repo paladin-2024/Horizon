@@ -52,7 +52,11 @@ class HealthEndpointTest {
 
     @Test
     void unauthenticatedPostIsRejectedWith401() throws Exception {
+        // The X-Horizon-Client header satisfies the CSRF defense added with auth (see
+        // com.horizon.auth.CsrfHeaderFilterTest), so this request is rejected for lacking
+        // authentication specifically, not for missing that header.
         var request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/anything"))
+                .header("X-Horizon-Client", "web")
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
 
