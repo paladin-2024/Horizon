@@ -11,6 +11,9 @@ spring:
       ddl-auto: update # dev and test only; staging and production override to validate when Flyway lands
   flyway:
     enabled: false
+  sql:
+    init:
+      mode: always
 
 management:
   endpoints:
@@ -35,5 +38,8 @@ horizon:
   idempotency:
     lock-timeout: PT60S
     retention: PT48H
+  purge:
+    batch-size: 500
+    cron: "0 */10 * * * *"
   rate-limit:
     sweep-interval-ms: 300000
