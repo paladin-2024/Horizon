@@ -3,6 +3,7 @@ import { type ClassValue, clsx } from "clsx";
 import qs from "query-string";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
+import { isValidPhone } from "@/lib/phone";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -196,6 +197,8 @@ export const getTransactionStatus = (date: Date) => {
 };
 
 
+const PHONE_MESSAGE = "Enter a valid phone number, for example +256771234567";
+
 export const authFormSchema = (type:string)  => z.object({
   //sih Up
   firstName:type === "sign-in" ? z.string().optional() : z.string().min(3),
@@ -205,8 +208,17 @@ export const authFormSchema = (type:string)  => z.object({
   state: type === "sign-in" ? z.string().optional() :z.string().min(3).max(15),
   postalCode: type === "sign-in" ? z.string().optional() :z.string().min(3).max(6),
   dateOfBirth: type === "sign-in" ? z.string().optional() :z.string().min(3),
-  ssn: type === "sign-in" ? z.string().optional() :z.string().min(3),
+  nationalId: type === "sign-in" ? z.string().optional() :z.string().min(3),
+  phone:
+    type === "sign-in"
+      ? z.string().optional()
+      : z.string().refine(isValidPhone, { message: PHONE_MESSAGE }),
   //both
   email: z.string().email(),
   password: z.string().min(6),
 })
+
+export const otpFormSchema = z.object({
+  phone: z.string().refine(isValidPhone, { message: PHONE_MESSAGE }),
+  code: z.string().regex(/^\d{6}$/, "Enter the 6-digit code"),
+});

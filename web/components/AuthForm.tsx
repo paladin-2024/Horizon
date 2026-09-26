@@ -14,13 +14,27 @@ import { authFormSchema } from '@/lib/utils';
 import Icon from './Icon';
 import Loading03Icon from '@hugeicons/core-free-icons/Loading03Icon';
 import { useRouter } from 'next/navigation';
-import { signIn, signUp } from '@/lib/actions/user.action';
+import { ApiError } from '@/lib/api/client';
+import { buildLoginRequest, buildRegisterRequest, login, register } from '@/lib/api/auth';
+import { errorMessage, formFieldErrors } from '@/lib/api/messages';
 
+type FormValues = z.infer<ReturnType<typeof authFormSchema>>
 
+// API field name -> form field name, for 400 validation_failed responses.
+const SIGN_UP_FIELDS = {
+    phone: 'phone',
+    password: 'password',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    email: 'email',
+    nationalId: 'nationalId',
+}
+const SIGN_IN_FIELDS = { identifier: 'email', password: 'password' }
 
 const AuthForm = ({ type }:{ type: string}) => {
     const router= useRouter();
     const [isLoading, setIsLoading] = useState(false)
+    const [formError, setFormError] = useState<string | null>(null)
 
     const formSchema = authFormSchema(type);
 
@@ -32,23 +46,50 @@ const AuthForm = ({ type }:{ type: string}) => {
         },
     })
 
+    const handleError = (error: unknown) => {
+        // Sign-in with an unverified phone: continue on the verification page.
+        if (error instanceof ApiError && error.code === 'phone_not_verified') {
+            router.push('/verify')
+            return
+        }
+
+        const fieldErrors = formFieldErrors(error, type === 'sign-up' ? SIGN_UP_FIELDS : SIGN_IN_FIELDS)
+        if (fieldErrors.length > 0) {
+            fieldErrors.forEach(({ field, message }) =>
+                form.setError(field as keyof FormValues, { type: 'server', message })
+            )
+            return
+        }
+
+        setFormError(errorMessage(
+            error,
+            type === 'sign-in'
+                ? 'Incorrect email or password.'
+                : 'We could not create your account. Please check your details and try again.'
+        ))
+    }
+
     const onSubmit= async (data: z.infer<typeof formSchema>) => {
         setIsLoading(true)
+        setFormError(null)
         try{
             if(type === 'sign-up'){
-                await signUp(data);
+                const request = buildRegisterRequest(data);
+                await register(request);
+                router.push(`/verify?phone=${encodeURIComponent(request.phone)}`)
             }
 
             if(type === 'sign-in'){
-                const response= await signIn({
+                await login(buildLoginRequest({
                     email:data.email,
                     password:data.password,
-                })
-                if(response) router.push('/')
+                }))
+                router.push('/')
+                router.refresh()
             }
 
         }catch(error){
-            console.log(error);
+            handleError(error)
         } finally{
             setIsLoading(false);
         }
@@ -113,11 +154,18 @@ const AuthForm = ({ type }:{ type: string}) => {
 
                                 <CustomInput
                                     control={form.control}
-                                    name='ssn'
+                                    name='nationalId'
                                     label='National ID'
                                     placeholder='Enter your national ID number'
                                 />
                             </div>
+
+                            <CustomInput
+                                control={form.control}
+                                name='phone'
+                                label='Phone Number'
+                                placeholder='Example: +256771234567'
+                            />
                         </div>
 
                         <Separator />
@@ -181,6 +229,10 @@ const AuthForm = ({ type }:{ type: string}) => {
                 placeholder='Enter your password'
                 />
                 <div className='flex flex-col gap-4'>
+
+                {formError && (
+                    <p className="form-message" role="alert">{formError}</p>
+                )}
 
                 <Button type="submit" disabled={isLoading} className='form-btn'>
                     {isLoading ?(

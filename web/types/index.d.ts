@@ -7,24 +7,6 @@ declare type SearchParamProps = {
 
 // ========================================
 
-declare type SignUpParams = {
-  firstName: string;
-  lastName: string;
-  address1: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  dateOfBirth: string;
-  ssn: string;
-  email: string;
-  password: string;
-};
-
-declare type LoginUser = {
-  email: string;
-  password: string;
-};
-
 declare type User = {
   $id: string;
   email: string;
@@ -39,13 +21,6 @@ declare type User = {
   postalCode: string;
   dateOfBirth: string;
   ssn: string;
-};
-
-declare type NewUserParams = {
-  userId: string;
-  email: string;
-  name: string;
-  password: string;
 };
 
 declare type Account = {
@@ -292,10 +267,6 @@ declare interface getTransactionsByBankIdProps {
   bankId: string;
 }
 
-declare interface signInProps {
-  email: string;
-  password: string;
-}
 
 declare interface getUserInfoProps {
   userId: string;
