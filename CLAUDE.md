@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Horizon is a banking dashboard (Next.js 15 App Router, React 19, TypeScript, Tailwind CSS 3). The npm package name is `jsm_banking`; the README is a generic starter description and does not describe the real app. The project is an early-stage build-along of a banking app: UI shells exist, but the backend is not wired up yet.
+Horizon is a banking dashboard (Next.js 15 App Router, React 19, TypeScript, Tailwind CSS 3). The npm package name is `jsm_banking`; the README is a generic starter description and does not describe the real app. The project is an early-stage build-along of a banking app: the auth flow (register, OTP verify, login, session refresh, logout) is wired to the real Spring Boot API; account and transaction data are still UI shells backed by mock data.
 
 ## Commands
 
@@ -20,9 +20,10 @@ npm run build
 npm run start
 npm run lint     # next lint (eslint 9 flat config: next/core-web-vitals + next/typescript)
 npx tsc --noEmit # type-check
+npm test         # vitest run; unit tests for the pure logic under lib/, no component tests
 ```
 
-There is no frontend test runner.
+Tests: `npm test` runs Vitest (unit tests for the pure logic under `lib/`; no component tests).
 
 Backend (`backend/`, Spring Boot 4.1, Java 21, Maven Wrapper):
 
@@ -52,12 +53,11 @@ The repo has two apps: `web/` (Next.js, UI only) and `backend/` (Spring Boot, bu
 - `app/layout.tsx` loads the Inter and IBM Plex Serif fonts as CSS variables (`--font-inter`, `--font-ibm-plex-serif`).
 - Sidebar and mobile nav links come from `sidebarLinks` in `constants/index.ts`. Add a new route there as well as under `app/(root)`.
 
-**Auth form flow.** `AuthForm` is a single client component for both sign-in and sign-up. The zod schema comes from `authFormSchema(type)` in `lib/utils.ts`. It makes the sign-up-only fields optional when `type === 'sign-in'`. Adding a sign-up field means changing the schema, the `SignUpParams` type, and the JSX in `AuthForm` together. `AuthForm` calls `signIn` and `signUp` from `lib/actions/user.action.ts`.
+**Auth form flow.** `AuthForm` is a single client component for both sign-in and sign-up. The zod schema comes from `authFormSchema(type)` in `lib/utils.ts`; it makes the sign-up-only fields optional when `type === 'sign-in'`. Adding a sign-up field means changing the schema and the JSX in `AuthForm` together, and, if the API needs it, `buildRegisterRequest` in `lib/api/auth.ts`. Sign-up posts to `/auth/register` and continues on `/verify` (`components/OtpForm.tsx`), which calls `/auth/verify-otp`; sign-in posts to `/auth/login`. The country is derived from the phone number's calling code (+256 UG, +243 CD). The address, city, state, postal code and date of birth fields are collected but not sent (the API does not store them).
 
-**Frontend is not wired to the backend yet.**
-- `lib/actions/user.action.ts` has stub `signIn`/`signUp` that do nothing (the `'use server'` directive typo was fixed in commit 4ca18bc).
-- `types/index.d.ts` declares global ambient types (`User`, `Account`, `Transaction`, `SignUpParams`, ...) with no imports needed. Their fields (`$id`, `appwriteItemId`, `dwollaCustomerId`, Plaid-style account fields) and the comments in `AuthForm` come from an abandoned Appwrite/Plaid/Dwolla plan. The backend is now the Spring Boot service in `backend/`; these types and comments are replaced when the frontend is wired to it.
-- Pages currently use hardcoded mock data (for example `loggedIn` in `app/(root)/layout.tsx` and `app/(root)/page.tsx`, and fake balances passed to `TotalBalanceBox` and `RightSideBar`). Replace it rather than building on it.
+**API access and sessions.** All API calls go through `apiFetch` in `lib/api/client.ts` (relative `/api/v1/...`, cookies included, `X-Horizon-Client: web` on every request, `Idempotency-Key` on POST, RFC 7807 errors as `ApiError`, one automatic `POST /auth/refresh` and retry on a 401). Server components cannot use it: they call `fetchMe` in `lib/api/server.ts`, which forwards the visitor's cookies to `API_URL`. The API sets the httpOnly cookies `hz_access` (15-minute JWT) and `hz_refresh` (only sent to `/api/v1/auth/*`). `middleware.ts` redirects by the presence of `hz_access` only (it cannot verify the JWT); the `(root)` layout verifies it by calling `GET /auth/me`, and `/refresh-session` renews an expired token from the browser. The pure route rules are in `lib/session.ts`. Unit tests (`npm test`, Vitest) cover the logic in `lib/`; there are no component tests.
+
+The `(root)` layout now gets the real user from the API. The pages still use hardcoded mock data (for example `loggedIn` in `app/(root)/page.tsx`, and fake balances passed to `TotalBalanceBox` and `RightSideBar`). Replace it rather than building on it.
 
 **Styling.**
 - Tailwind is configured in `tailwind.config.ts` with a custom palette (`bankGradient`, `success`, `pink`, `indigo`, ...) and it scans `components/`, `app/` and `constants/`.
