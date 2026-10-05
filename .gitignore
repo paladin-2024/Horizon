@@ -54,3 +54,6 @@ application-local.yml
 
 # Playwright MCP browser artifacts
 .playwright-mcp/
+
+# Impeccable design-review screenshots (scratch verification, not durable design truth)
+.impeccable/review/
