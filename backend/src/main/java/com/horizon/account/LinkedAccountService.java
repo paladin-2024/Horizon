@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -87,6 +88,27 @@ public class LinkedAccountService {
                 "currency", draft.openingBalance().currency()));
 
         return toView(account);
+    }
+
+    /**
+     * Moves an account's balance by {@code deltaMinor} in the account's own currency (negative is money out).
+     *
+     * <p>MANDATORY on purpose: the balance must move in the same database transaction as whatever caused it —
+     * the CSV import inserts its rows and adjusts the balance atomically or not at all. The entity's
+     * {@code @Version} column turns a concurrent change into
+     * {@link org.springframework.orm.ObjectOptimisticLockingFailureException} at commit, so the caller retries
+     * rather than writing a stale balance.
+     *
+     * @param asOf when the new balance is true as of; only moves {@code balanceAsOf} forward, never back
+     * @throws ApiException 404 {@code account_not_found} when there is no such account
+     * @throws org.springframework.transaction.IllegalTransactionStateException when there is no caller transaction
+     */
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void applyBalanceDelta(UUID accountId, long deltaMinor, Instant asOf) {
+        LinkedAccount account = repository.findById(accountId)
+                .orElseThrow(() -> ApiException.notFound("account_not_found", "Account not found"));
+        account.applyDelta(deltaMinor, asOf);
+        repository.save(account);
     }
 
     private static LinkedAccountView toView(LinkedAccount account) {
