@@ -3,7 +3,9 @@ import BankCard from "./BankCard";
 import Icon from "./Icon";
 import PlusSignIcon from "@hugeicons/core-free-icons/PlusSignIcon";
 
-const RightSideBar = ({ user, transactions, banks }: RightSidebarProps) => {
+const RightSideBar = ({ user, accounts }: RightSidebarProps) => {
+  const preview = accounts.slice(0, 2);
+
   return (
     <div>
       <aside className="right-sidebar">
@@ -19,39 +21,33 @@ const RightSideBar = ({ user, transactions, banks }: RightSidebarProps) => {
               <h1 className="profile-name">
                 {user.firstName} {user.lastName}
               </h1>
-              <p className="profile-email">{user.email}</p>
+              <p className="profile-email">{user.email ?? user.phone}</p>
             </div>
           </div>
         </section>
         <section className="banks">
           <div className="flex w-full justify-between">
             <h2 className="header-2">My Banks</h2>
-            <Link href="/" className="flex gap-2">
+            <Link href="/my-banks" className="flex gap-2">
               <Icon icon={PlusSignIcon} size={18} className="text-gray-600" />
               <h2 className="text-14 font-semibold text-gray-600">Add Bank</h2>
             </Link>
           </div>
-          {banks?.length > 0 && (
+          {preview.length > 0 ? (
             <div className="relative flex flex-1 flex-col items-center justify-center gap-5">
               <div className="relative z-10">
-                <BankCard
-                  key={banks[0].$id}
-                  account={banks[0]}
-                  userName={`${user.firstName} ${user.lastName}`}
-                  showBalance={false}
-                />
+                <BankCard account={preview[0]} showBalance={false} />
               </div>
-              {banks[1] && (
+              {preview[1] && (
                 <div className="absolute right-0 top-8 z-0 w-[90%]">
-                  <BankCard
-                    key={banks[1].$id}
-                    account={banks[1]}
-                    userName={`${user.firstName} ${user.lastName}`}
-                    showBalance={false}
-                  />
+                  <BankCard account={preview[1]} showBalance={false} />
                 </div>
               )}
             </div>
+          ) : (
+            <p className="text-14 text-gray-500">
+              No accounts linked yet — add one from My Banks.
+            </p>
           )}
         </section>
       </aside>

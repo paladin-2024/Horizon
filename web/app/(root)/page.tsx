@@ -1,16 +1,23 @@
 import Link from 'next/link'
+import { cookies } from 'next/headers'
 import HeaderBox from '@/components/HeaderBox'
 import RightSideBar from '@/components/RightSideBar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 import EmptyState from '@/components/EmptyState';
 import Icon from '@/components/Icon';
 import { Button } from '@/components/ui/button';
-import { mockCurrentUser } from '@/lib/session';
+import { cookieHeader, fetchAccounts, fetchMe } from '@/lib/api/server';
 import BankIcon from '@hugeicons/core-free-icons/BankIcon';
 import SentIcon from '@hugeicons/core-free-icons/SentIcon';
 
-function Home() {
-    const loggedIn = mockCurrentUser;
+async function Home() {
+    const cookieStore = await cookies();
+    const header = cookieHeader(cookieStore.getAll());
+    // The (root) layout already confirmed the session; a second /auth/me call
+    // here is cheap and keeps this page self-contained if it's ever reused.
+    const [loggedIn, accountList] = await Promise.all([fetchMe(header), fetchAccounts(header)]);
+    const { items: accounts, totals } = accountList;
+
     return (
     <section className='home'>
         <div className='home-content'>
@@ -18,14 +25,13 @@ function Home() {
                 <HeaderBox
                     type="greeting"
                     title="Welcome"
-                    user={loggedIn?.firstName || 'Guest'}
+                    user={loggedIn?.firstName || 'there'}
                     subtext="Access and manage your account and transactions efficiently."
                 />
 
                 <TotalBalanceBox
-                accounts={[]}
-                totalBanks={1}
-                totalCurrentBalance={1250.35}
+                    accounts={accounts}
+                    totals={totals}
                 />
             </header>
 
@@ -49,15 +55,15 @@ function Home() {
                 <EmptyState
                     illustration="/illustrations/empty-transactions.svg"
                     title="No transactions yet"
-                    description="Link a bank to start seeing your activity here."
+                    description={
+                        accounts.length > 0
+                            ? "Transaction history is coming soon — your linked accounts are ready for it."
+                            : "Link a bank to start seeing your activity here."
+                    }
                 />
             </section>
         </div>
-        <RightSideBar
-            user={loggedIn}
-            transactions={[]}
-            banks={[{currentBalance:123.50}]}
-        />
+        {loggedIn && <RightSideBar user={loggedIn} accounts={accounts} />}
     </section>
     )
 }
