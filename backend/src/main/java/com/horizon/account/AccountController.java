@@ -1,5 +1,6 @@
 package com.horizon.account;
 
+import com.horizon.account.AccountDtos.AccountListResponse;
 import com.horizon.account.AccountDtos.AccountResponse;
 import com.horizon.account.AccountDtos.CreateAccountRequest;
 import com.horizon.common.error.ApiException;
@@ -15,9 +16,15 @@ import com.horizon.linking.ProviderRegistry;
 import com.horizon.linking.ProviderType;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +65,34 @@ class AccountController {
 
         LinkedAccountView view = accountService.create(userId, draft);
         return ResponseEntity.created(URI.create("/api/v1/accounts/" + view.id())).body(toResponse(view));
+    }
+
+    @GetMapping
+    AccountListResponse list() {
+        UUID userId = CurrentUser.id();
+        List<LinkedAccountView> views = accountService.list(userId);
+        Map<UUID, InstitutionView> institutions = institutionService.findAllByIds(
+                views.stream().map(LinkedAccountView::institutionId).collect(Collectors.toSet()));
+
+        List<AccountResponse> items = views.stream()
+                .map(view -> toResponse(view, institutions.get(view.institutionId())))
+                .toList();
+
+        // One total per currency, sorted by code. Currencies are never added together.
+        Map<String, Long> byCurrency = new TreeMap<>();
+        for (LinkedAccountView view : views) {
+            byCurrency.merge(view.currency(), view.currentBalanceMinor(), Long::sum);
+        }
+        List<Money> totals = byCurrency.entrySet().stream()
+                .map(entry -> Money.of(entry.getValue(), entry.getKey()))
+                .toList();
+
+        return new AccountListResponse(items, totals);
+    }
+
+    @GetMapping("/{id}")
+    AccountResponse get(@PathVariable UUID id) {
+        return toResponse(accountService.get(CurrentUser.id(), id));
     }
 
     private static ProviderType parseProvider(String raw) {
