@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+// Self-hosted: Switzer is a Fontshare family, not on next/font/google.
+// See assets/fonts/switzer/LICENSE.md for Fontshare's free license terms.
+const switzer = localFont({
+  src: [
+    { path: "../assets/fonts/switzer/Switzer-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../assets/fonts/switzer/Switzer-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../assets/fonts/switzer/Switzer-SemiBold.woff2", weight: "600", style: "normal" },
+    { path: "../assets/fonts/switzer/Switzer-Bold.woff2", weight: "700", style: "normal" },
+    { path: "../assets/fonts/switzer/Switzer-Extrabold.woff2", weight: "800", style: "normal" },
+  ],
   variable: "--font-sans",
+  display: "swap",
 });
 
 
@@ -23,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={plusJakartaSans.variable}>
+    <html lang="en" className={switzer.variable}>
       <body>
         {children}
       </body>

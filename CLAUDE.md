@@ -49,7 +49,7 @@ The repo has two apps: `web/` (Next.js, UI only) and `backend/` (Spring Boot, bu
 
 **Routing (`app/`)** uses two route groups with separate layouts:
 - `(auth)` holds `sign-in` and `sign-up`, both rendering the shared `components/AuthForm.tsx` with a `type` prop of `'sign-in'` or `'sign-up'`.
-- `(root)` is the authenticated app shell. Its `layout.tsx` renders `Sidebar` (desktop) and `MobileNav` (mobile), with the page in `children`. Routes: `/`, `/my-banks`, `/transaction-history`, `/payment-transfer`.
+- `(root)` is the authenticated app shell. Its `layout.tsx` renders `Sidebar` (desktop) and `MobileNav` (mobile), with the page in `children`. Routes: `/`, `/my-banks`, `/transaction-history`, `/payment-transfer`, `/budgets`, `/goals`, `/notifications`, `/profile`. `/budgets`, `/goals` and `/notifications` read from `lib/sampleData.ts` (no backend module yet for those three) and must show `SampleDataNotice`; `/`, `/my-banks` and `/profile` are wired to the real accounts API.
 - `app/layout.tsx` loads the Inter and IBM Plex Serif fonts as CSS variables (`--font-inter`, `--font-ibm-plex-serif`).
 - Sidebar and mobile nav links come from `sidebarLinks` in `constants/index.ts`. Add a new route there as well as under `app/(root)`.
 
