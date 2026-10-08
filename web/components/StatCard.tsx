@@ -1,6 +1,7 @@
 import { IconSvgElement } from "@hugeicons/react";
 import Icon from "./Icon";
 import { Card } from "./ui/card";
+import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 import ArrowUp01Icon from "@hugeicons/core-free-icons/ArrowUp01Icon";
 import ArrowDown01Icon from "@hugeicons/core-free-icons/ArrowDown01Icon";
@@ -35,15 +36,17 @@ const StatCard = ({
         <div className="flex items-baseline gap-2">
           <p className="text-18 font-semibold text-gray-900">{value}</p>
           {delta && (
-            <span
+            <Badge
               className={cn(
-                "text-10 flex shrink-0 items-center gap-0.5 whitespace-nowrap rounded-full px-1.5 py-0.5 font-semibold",
-                delta.direction === "up" ? "bg-success-25 text-success-700" : "bg-pink-25 text-pink-700"
+                "text-10 flex shrink-0 items-center gap-0.5 whitespace-nowrap border-transparent px-1.5 py-0.5 font-semibold",
+                delta.direction === "up"
+                  ? "bg-success-25 text-success-700 hover:bg-success-25"
+                  : "bg-pink-25 text-pink-700 hover:bg-pink-25"
               )}
             >
               <Icon icon={delta.direction === "up" ? ArrowUp01Icon : ArrowDown01Icon} size={10} />
               {delta.label}
-            </span>
+            </Badge>
           )}
         </div>
       </div>

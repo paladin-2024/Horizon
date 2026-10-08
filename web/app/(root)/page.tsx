@@ -1,14 +1,14 @@
-import Link from 'next/link'
 import { cookies } from 'next/headers'
 import HeaderBox from '@/components/HeaderBox'
 import RightSideBar from '@/components/RightSideBar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 import EmptyState from '@/components/EmptyState';
-import Icon from '@/components/Icon';
-import { Button } from '@/components/ui/button';
+import QuickAction from '@/components/QuickAction';
 import { cookieHeader, fetchAccounts, fetchMe } from '@/lib/api/server';
 import BankIcon from '@hugeicons/core-free-icons/BankIcon';
 import SentIcon from '@hugeicons/core-free-icons/SentIcon';
+import PieChart01Icon from '@hugeicons/core-free-icons/PieChart01Icon';
+import UserIcon from '@hugeicons/core-free-icons/UserIcon';
 
 async function Home() {
     const cookieStore = await cookies();
@@ -35,19 +35,11 @@ async function Home() {
                 />
             </header>
 
-            <section className="flex flex-wrap gap-3">
-                <Button asChild variant="outline" className="gap-2">
-                    <Link href="/my-banks">
-                        <Icon icon={BankIcon} size={18} />
-                        Add a bank
-                    </Link>
-                </Button>
-                <Button asChild variant="outline" className="gap-2">
-                    <Link href="/payment-transfer">
-                        <Icon icon={SentIcon} size={18} />
-                        Transfer funds
-                    </Link>
-                </Button>
+            <section className="flex flex-wrap gap-6 sm:gap-10">
+                <QuickAction icon={BankIcon} label="Add a bank" href="/my-banks" />
+                <QuickAction icon={SentIcon} label="Transfer funds" href="/payment-transfer" />
+                <QuickAction icon={PieChart01Icon} label="Budgets" href="/budgets" />
+                <QuickAction icon={UserIcon} label="Profile" href="/profile" />
             </section>
 
             <section className="recent-transactions">

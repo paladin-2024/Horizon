@@ -1,7 +1,8 @@
 import { Card } from "./ui/card";
+import { Progress } from "./ui/progress";
+import { Badge } from "./ui/badge";
 import Icon from "./Icon";
 import { formatMoney } from "@/lib/money";
-import { cn } from "@/lib/utils";
 import CheckmarkCircle02Icon from "@hugeicons/core-free-icons/CheckmarkCircle02Icon";
 
 const GoalCard = ({
@@ -28,19 +29,15 @@ const GoalCard = ({
           <p className="text-12 text-gray-500">{complete ? "Goal reached" : `Target: ${targetDate}`}</p>
         </div>
         {complete && (
-          <span className="flex size-8 items-center justify-center rounded-full bg-success-25 text-success-700">
-            <Icon icon={CheckmarkCircle02Icon} size={18} />
-          </span>
+          <Badge className="gap-1 border-transparent bg-success-25 text-success-700 hover:bg-success-25">
+            <Icon icon={CheckmarkCircle02Icon} size={14} />
+            Done
+          </Badge>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
-          <div
-            className={cn("h-full rounded-full", complete ? "bg-success-600" : "bg-bank-gradient")}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
+        <Progress value={pct} className="h-2 bg-gray-100" indicatorClassName={complete ? "bg-success-600" : "bg-bank-gradient"} />
         <div className="flex items-baseline justify-between">
           <p className="text-14 font-semibold text-gray-900">{formatMoney(savedMinor, currency)}</p>
           <p className="text-12 text-gray-500">of {formatMoney(targetMinor, currency)} · {pct}%</p>

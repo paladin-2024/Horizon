@@ -3,6 +3,7 @@ import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -57,16 +58,17 @@ const CategoryBreakdown = ({
 
       <div className="flex flex-1 flex-wrap gap-2">
         {items.map((item) => (
-          <span
+          <Badge
             key={item.name}
             className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-12 font-semibold",
+              "gap-1.5 border-transparent px-3 py-1.5 text-12 font-semibold",
               TINT_CLASS[item.tint].bg,
-              TINT_CLASS[item.tint].text
+              TINT_CLASS[item.tint].text,
+              `hover:${TINT_CLASS[item.tint].bg}`
             )}
           >
             {item.name} · {Math.round((item.amountMinor / total) * 100)}%
-          </span>
+          </Badge>
         ))}
       </div>
     </div>

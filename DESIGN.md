@@ -209,7 +209,10 @@ Corners are soft but restrained: the base radius is 12px (`--radius: 0.75rem`), 
 - **Typography:** 15px semibold labels (`sidebar-label`), 22px icons.
 
 ### Chips / Category Badges
-- **Style:** Fully rounded (`rounded-2xl`/`rounded-full`), each semantic category gets a 3-part palette (background tint, circle/icon background, text color) drawn from the `success`/`pink`/`blue` families — never an arbitrary one-off color. A transaction-status chip additionally carries a colored left border/dot plus a tinted background (`Success` = green family, `Processing` = neutral gray, etc.).
+- **Style:** Fully rounded (`rounded-2xl`/`rounded-full`), each semantic category gets a 3-part palette (background tint, circle/icon background, text color) drawn from the `success`/`pink`/`blue` families — never an arbitrary one-off color. A transaction-status chip additionally carries a colored left border/dot plus a tinted background (`Success` = green family, `Processing` = neutral gray, etc.). Built on shadcn's `Badge` primitive, not a raw `<span>`, so hover/focus states stay consistent everywhere a chip is used.
+
+### Icon-in-Circle (the standard icon idiom)
+Every functional icon that isn't a plain nav glyph sits inside a fully-rounded, softly-tinted circle — never bare on the page: `StatCard`'s leading icon, `QuickAction` tiles (`Add a bank` / `Transfer funds` / `Budgets` / `Profile` on Home), notification-kind icons, the goal-complete checkmark. The tint is always one of the semantic families (blue/success/pink), sized ~40–48px, icon at roughly half that. This is a borrowed convention from dashboard-template references, deliberately kept — but always in Horizon's own palette, never the reference's colors.
 
 ### Bank Card (signature component)
 The one place the system allows a fully-saturated gradient surface: an 18–20px-radius card in the `bank-gradient` blue, white text, masked account number, and a decorative diagonal-lines texture image bleeding off the top-left corner. This card's visual weight is intentional — it's the one element on the page allowed to look like a "real" physical bank card, everything else around it stays flat and quiet.

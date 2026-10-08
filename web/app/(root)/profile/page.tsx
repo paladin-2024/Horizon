@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import Icon from '@/components/Icon'
 import SignOutButton from '@/components/SignOutButton'
+import { Badge } from '@/components/ui/badge'
 import { cookieHeader, fetchAccounts, fetchMe } from '@/lib/api/server'
 import { formatMoney } from '@/lib/money'
 import Mail01Icon from '@hugeicons/core-free-icons/Mail01Icon'
@@ -89,9 +90,9 @@ const Profile = async () => {
               <p className="text-14 font-semibold text-gray-700">Notification preferences</p>
               <p className="text-12 text-gray-500">Low-balance and large-transaction alerts</p>
             </div>
-            <span className="rounded-full bg-gray-200 px-2.5 py-1 text-10 font-semibold uppercase tracking-wide text-gray-600">
+            <Badge className="border-transparent bg-gray-200 text-10 uppercase tracking-wide text-gray-600 hover:bg-gray-200">
               Coming soon
-            </span>
+            </Badge>
           </div>
         </Card>
       </section>

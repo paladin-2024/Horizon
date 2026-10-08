@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Icon from "./Icon";
+import { Badge } from "./ui/badge";
 import Wifi02Icon from "@hugeicons/core-free-icons/Wifi02Icon";
 import { formatMoney } from "@/lib/money";
 
@@ -31,9 +32,9 @@ const BankCard = ({ account, showBalance = true }: BankCardProps) => {
         </div>
 
         <div className="bank-card_icon">
-          <span className="rounded-full border border-white/40 px-2 py-0.5 text-10 font-semibold uppercase tracking-wide text-white/90">
+          <Badge className="border-white/40 bg-transparent text-10 uppercase tracking-wide text-white/90 hover:bg-transparent">
             {account.balance.currency}
-          </span>
+          </Badge>
         </div>
         <Image
           src="/icons/lines.png"
