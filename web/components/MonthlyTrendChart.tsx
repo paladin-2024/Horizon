@@ -1,20 +1,15 @@
 'use client'
-import { useRef, useState } from "react";
-import {
-  Chart as ChartJS,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { useState } from "react";
+import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
+import { ChartContainer, type ChartConfig } from "./ui/chart";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
-
-ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 type Metric = "income" | "spending";
 
 const METRIC_LABEL: Record<Metric, string> = { income: "Income", spending: "Spending" };
+
+const config: ChartConfig = { value: { label: "Amount" } };
 
 /**
  * A single-series bar chart with every bar in a quiet neutral tint except the
@@ -30,19 +25,37 @@ const MonthlyTrendChart = ({
   currency: string;
 }) => {
   const [metric, setMetric] = useState<Metric>("income");
-  const chartRef = useRef<ChartJS<"bar"> | null>(null);
-  const [callout, setCallout] = useState<{ x: number; y: number; label: string } | null>(null);
+  const highlightIndex = data.length - 1;
+  const chartData = data.map((d, i) => ({
+    month: d.month,
+    value: d[metric],
+    fill: i === highlightIndex ? "#0179FE" : "#EAECF0",
+  }));
 
-  const values = data.map((d) => d[metric]);
-  const highlightIndex = values.length - 1;
-
-  const updateCallout = () => {
-    const chart = chartRef.current;
-    if (!chart) return;
-    const meta = chart.getDatasetMeta(0);
-    const point = meta.data[highlightIndex] as unknown as { x: number; y: number } | undefined;
-    if (!point) return;
-    setCallout({ x: point.x, y: point.y, label: formatMoney(values[highlightIndex], currency) });
+  const Callout = (props: {
+    x?: string | number;
+    y?: string | number;
+    width?: string | number;
+    index?: number;
+    value?: string | number;
+  }) => {
+    if (props.index !== highlightIndex) return <g />;
+    const x = Number(props.x ?? 0);
+    const y = Number(props.y ?? 0);
+    const width = Number(props.width ?? 0);
+    const value = Number(props.value ?? 0);
+    const cx = x + width / 2;
+    const text = formatMoney(value, currency);
+    const boxWidth = Math.max(80, text.length * 6.5 + 20);
+    return (
+      <g>
+        <rect x={cx - boxWidth / 2} y={y - 34} width={boxWidth} height={26} rx={8} fill="#101828" />
+        <polygon points={`${cx - 5},${y - 8} ${cx + 5},${y - 8} ${cx},${y - 2}`} fill="#101828" />
+        <text x={cx} y={y - 17} textAnchor="middle" fill="#fff" fontSize={12} fontWeight={600} fontFamily="var(--font-sans)">
+          {text}
+        </text>
+      </g>
+    );
   };
 
   return (
@@ -63,50 +76,29 @@ const MonthlyTrendChart = ({
         ))}
       </div>
 
-      <div className="relative h-64">
-        {callout && (
-          <div
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-lg bg-gray-900 px-2.5 py-1.5 text-12 font-semibold text-white shadow-chart"
-            style={{ left: callout.x, top: callout.y - 10 }}
-          >
-            {callout.label}
-            <span className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
-          </div>
-        )}
-        <Bar
-          ref={chartRef}
-          data={{
-            labels: data.map((d) => d.month),
-            datasets: [
-              {
-                data: values,
-                backgroundColor: values.map((_, i) => (i === highlightIndex ? "#0179FE" : "#EAECF0")),
-                borderRadius: 6,
-                maxBarThickness: 28,
-              },
-            ],
-          }}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: { onComplete: updateCallout },
-            onResize: () => requestAnimationFrame(updateCallout),
-            scales: {
-              x: { grid: { display: false }, ticks: { font: { family: "var(--font-sans)", size: 12 }, color: "#667085" } },
-              y: {
-                grid: { color: "#F2F4F7" },
-                ticks: {
-                  font: { family: "var(--font-sans)", size: 11 },
-                  color: "#98A2B3",
-                  // v is minor units (×100), so this divisor reads it back in whole-currency millions.
-                  callback: (v) => `${Number(v) / 100_000_000}M`,
-                },
-              },
-            },
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-          }}
-        />
-      </div>
+      <ChartContainer config={config} className="aspect-auto h-64 w-full">
+        <BarChart data={chartData} margin={{ top: 28, right: 4, left: 4, bottom: 4 }}>
+          <CartesianGrid vertical={false} stroke="#F2F4F7" />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontFamily: "var(--font-sans)", fontSize: 12, fill: "#667085" }}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tick={{ fontFamily: "var(--font-sans)", fontSize: 11, fill: "#98A2B3" }}
+            tickFormatter={(v) => `${Number(v) / 100_000_000}M`}
+          />
+          <Bar dataKey="value" radius={6} maxBarSize={28}>
+            {chartData.map((entry) => (
+              <Cell key={entry.month} fill={entry.fill} />
+            ))}
+            <LabelList dataKey="value" content={Callout} />
+          </Bar>
+        </BarChart>
+      </ChartContainer>
     </div>
   );
 };
