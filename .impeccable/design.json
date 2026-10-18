@@ -111,7 +111,7 @@
     "rules": [
       { "name": "The One Blue Rule", "body": "Bank Blue is the only color allowed to carry a primary call-to-action or an active/selected state. A second primary-looking button on the same screen is a bug, not a design choice.", "section": "colors" },
       { "name": "The Semantic-Only Rule", "body": "Success green, alert red, and the category palette only appear when they encode a real state or category — never as generic decoration.", "section": "colors" },
-      { "name": "The One-Family Rule", "body": "Every new screen uses Switzer exclusively; hierarchy comes from the existing weight/size scale, not a new face.", "section": "typography" },
+      { "name": "The One-Family Rule", "body": "Every new screen uses Outfit exclusively; hierarchy comes from the existing weight/size scale, not a new face.", "section": "typography" },
       { "name": "The Flat-By-Default Rule", "body": "Nothing gets a shadow just to look important. Shadow is reserved for the four named roles (form, chart, profile, creditCard); a new component either reuses one of them or stays flat with a hairline border.", "section": "elevation" }
     ],
     "dos": [

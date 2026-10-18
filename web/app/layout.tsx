@@ -1,17 +1,10 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 
-// Self-hosted: Switzer is a Fontshare family, not on next/font/google.
-// See assets/fonts/switzer/LICENSE.md for Fontshare's free license terms.
-const switzer = localFont({
-  src: [
-    { path: "../assets/fonts/switzer/Switzer-Regular.woff2", weight: "400", style: "normal" },
-    { path: "../assets/fonts/switzer/Switzer-Medium.woff2", weight: "500", style: "normal" },
-    { path: "../assets/fonts/switzer/Switzer-SemiBold.woff2", weight: "600", style: "normal" },
-    { path: "../assets/fonts/switzer/Switzer-Bold.woff2", weight: "700", style: "normal" },
-    { path: "../assets/fonts/switzer/Switzer-Extrabold.woff2", weight: "800", style: "normal" },
-  ],
+const outfit = Outfit({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-sans",
   display: "swap",
 });
@@ -31,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={switzer.variable}>
+    <html lang="en" className={outfit.variable}>
       <body>
         {children}
       </body>

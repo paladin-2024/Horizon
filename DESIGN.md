@@ -36,27 +36,27 @@ colors:
   neutral-900: "#101828"
 typography:
   display:
-    fontFamily: "Switzer, system-ui, sans-serif"
+    fontFamily: "Outfit, system-ui, sans-serif"
     fontSize: "24px"
     fontWeight: 600
     lineHeight: "32px"
   headline:
-    fontFamily: "Switzer, system-ui, sans-serif"
+    fontFamily: "Outfit, system-ui, sans-serif"
     fontSize: "20px"
     fontWeight: 600
     lineHeight: "28px"
   title:
-    fontFamily: "Switzer, system-ui, sans-serif"
+    fontFamily: "Outfit, system-ui, sans-serif"
     fontSize: "16px"
     fontWeight: 600
     lineHeight: "24px"
   body:
-    fontFamily: "Switzer, system-ui, sans-serif"
+    fontFamily: "Outfit, system-ui, sans-serif"
     fontSize: "14px"
     fontWeight: 400
     lineHeight: "20px"
   label:
-    fontFamily: "Switzer, system-ui, sans-serif"
+    fontFamily: "Outfit, system-ui, sans-serif"
     fontSize: "12px"
     fontWeight: 600
     lineHeight: "16px"
@@ -143,9 +143,9 @@ A near-monochrome neutral base (white, gray-25 through gray-900) carries almost 
 
 ## Typography
 
-**Body & Display Font:** Switzer (Swiss Typefaces, via Fontshare, self-hosted — see `web/assets/fonts/switzer/`), with system-ui/sans-serif fallback — the only typeface in the system; weights 400/500/600/700/800 in active use.
+**Body & Display Font:** Outfit (Google Fonts, via next/font/google), with system-ui/sans-serif fallback — the only typeface in the system; weights 400/500/600/700/800 in active use.
 
-**Character:** A rounded-geometric grotesque — single-story `a`, soft bowls, confident tabular-leaning numerals — carries both the big balance numbers and the smallest form hint. Horizon doesn't pair a display face with a body face; hierarchy is built through size, weight, and color, not a font change. (Replaced Plus Jakarta Sans on 2026-10-05 for a friendlier, more rounded numeral set that reads better at dashboard scale.)
+**Character:** A rounded-geometric grotesque — single-story `a`, soft bowls, confident tabular-leaning numerals — carries both the big balance numbers and the smallest form hint. Horizon doesn't pair a display face with a body face; hierarchy is built through size, weight, and color, not a font change. (Replaced Plus Jakarta Sans with self-hosted Switzer on 2026-10-05, then replaced Switzer with Outfit on 2026-10-18 per explicit direction — Outfit is the correct, final choice.)
 
 ### Hierarchy
 - **Display** (600, 24px/32px, scaling to 24px→30px on `lg:`): Page-level totals and headline numbers — `header-box-title`, `total-balance-amount`, profile name.
@@ -155,7 +155,7 @@ A near-monochrome neutral base (white, gray-25 through gray-900) carries almost 
 - **Label** (600, 12px/16px, sometimes 10px/14px for the smallest chips): Form error messages, secondary metadata (email under a name), tiny badge text.
 
 ### Named Rules
-**The One-Family Rule.** Every new screen uses Switzer exclusively; do not introduce a serif or a second sans for "editorial" moments — hierarchy comes from the existing weight/size scale, not a new face.
+**The One-Family Rule.** Every new screen uses Outfit exclusively; do not introduce a serif or a second sans for "editorial" moments — hierarchy comes from the existing weight/size scale, not a new face.
 
 ## Layout
 
