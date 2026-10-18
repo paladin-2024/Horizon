@@ -42,8 +42,8 @@ class AuthPurgerTest {
     void deletesExpiredOtpCodesAndKeepsLiveOnes() {
         String expiredPhone = TestPhones.nextUgandan();
         String livePhone = TestPhones.nextUgandan();
-        otpService.issue(expiredPhone);
-        otpService.issue(livePhone);
+        otpService.issue(expiredPhone, OtpPurpose.PHONE_VERIFICATION);
+        otpService.issue(livePhone, OtpPurpose.PHONE_VERIFICATION);
         jdbcTemplate.update("update otp_codes set expires_at = ? where phone = ?",
                 Timestamp.from(Instant.now().minusSeconds(3600)), expiredPhone);
 
@@ -84,9 +84,9 @@ class AuthPurgerTest {
     @Test
     void respectsTheBatchSize() {
         String phone = TestPhones.nextUgandan();
-        otpService.issue(phone);
-        otpService.issue(phone);
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         jdbcTemplate.update("update otp_codes set expires_at = ? where phone = ?",
                 Timestamp.from(Instant.now().minusSeconds(3600)), phone);
 

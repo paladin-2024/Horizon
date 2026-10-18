@@ -34,7 +34,7 @@ class OtpServiceTest {
     void sendsASixDigitCodeAndStoresItHashed() {
         String phone = TestPhones.nextUgandan();
 
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
 
         String code = sms.lastCodeFor(phone);
         assertThat(code).matches("\\d{6}");
@@ -47,24 +47,25 @@ class OtpServiceTest {
     @Test
     void acceptsTheCodeExactlyOnce() {
         String phone = TestPhones.nextUgandan();
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         String code = sms.lastCodeFor(phone);
 
-        assertThat(otpService.consume(phone, code)).isTrue();
-        assertThat(otpService.consume(phone, code)).isFalse();
+        assertThat(otpService.consume(phone, code, OtpPurpose.PHONE_VERIFICATION)).isTrue();
+        assertThat(otpService.consume(phone, code, OtpPurpose.PHONE_VERIFICATION)).isFalse();
     }
 
     @Test
     void rejectsAWrongCodeAndLocksOutAfterFiveAttempts() {
         String phone = TestPhones.nextUgandan();
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         String code = sms.lastCodeFor(phone);
 
         for (int attempt = 1; attempt <= 5; attempt++) {
-            assertThat(otpService.consume(phone, "000000".equals(code) ? "111111" : "000000")).isFalse();
+            assertThat(otpService.consume(phone, "000000".equals(code) ? "111111" : "000000",
+                    OtpPurpose.PHONE_VERIFICATION)).isFalse();
         }
 
-        assertThat(otpService.consume(phone, code)).isFalse();
+        assertThat(otpService.consume(phone, code, OtpPurpose.PHONE_VERIFICATION)).isFalse();
         Integer attempts = jdbcTemplate.queryForObject(
                 "select attempts from otp_codes where phone = ?", Integer.class, phone);
         assertThat(attempts).isEqualTo(5);
@@ -76,29 +77,51 @@ class OtpServiceTest {
     @Test
     void rejectsAnExpiredCode() {
         String phone = TestPhones.nextUgandan();
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         String code = sms.lastCodeFor(phone);
         jdbcTemplate.update("update otp_codes set expires_at = ? where phone = ?",
                 java.sql.Timestamp.from(Instant.now().minusSeconds(60)), phone);
 
-        assertThat(otpService.consume(phone, code)).isFalse();
+        assertThat(otpService.consume(phone, code, OtpPurpose.PHONE_VERIFICATION)).isFalse();
     }
 
     @Test
     void rejectsACodeForAPhoneThatNeverAskedForOne() {
-        assertThat(otpService.consume(TestPhones.nextCongolese(), "123456")).isFalse();
+        assertThat(otpService.consume(TestPhones.nextCongolese(), "123456",
+                OtpPurpose.PHONE_VERIFICATION)).isFalse();
     }
 
     @Test
     void issuingAgainInvalidatesThePreviousCode() {
         String phone = TestPhones.nextUgandan();
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         String first = sms.lastCodeFor(phone);
-        otpService.issue(phone);
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         String second = sms.lastCodeFor(phone);
 
         assertThat(second).isNotEqualTo(first);
-        assertThat(otpService.consume(phone, first)).isFalse();
-        assertThat(otpService.consume(phone, second)).isTrue();
+        assertThat(otpService.consume(phone, first, OtpPurpose.PHONE_VERIFICATION)).isFalse();
+        assertThat(otpService.consume(phone, second, OtpPurpose.PHONE_VERIFICATION)).isTrue();
+    }
+
+    @Test
+    void codesAreScopedByPurposeSoOneCannotBeUsedForTheOther() {
+        String phone = TestPhones.nextUgandan();
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
+        String verificationCode = sms.lastCodeFor(phone);
+
+        assertThat(otpService.consume(phone, verificationCode, OtpPurpose.PASSWORD_RESET)).isFalse();
+        assertThat(otpService.consume(phone, verificationCode, OtpPurpose.PHONE_VERIFICATION)).isTrue();
+    }
+
+    @Test
+    void issuingForOnePurposeDoesNotInvalidateTheOther() {
+        String phone = TestPhones.nextUgandan();
+        otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
+        String verificationCode = sms.lastCodeFor(phone);
+
+        otpService.issue(phone, OtpPurpose.PASSWORD_RESET);
+
+        assertThat(otpService.consume(phone, verificationCode, OtpPurpose.PHONE_VERIFICATION)).isTrue();
     }
 }

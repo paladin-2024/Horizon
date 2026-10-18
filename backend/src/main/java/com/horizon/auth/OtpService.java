@@ -26,26 +26,29 @@ class OtpService {
         this.properties = properties;
     }
 
-    /** Invalidates any code still outstanding for the phone, stores a new one and sends it. */
+    /** Invalidates any code still outstanding for the phone and purpose, stores a new one and sends it. */
     @Transactional
-    void issue(String phoneE164) {
+    void issue(String phoneE164, OtpPurpose purpose) {
         Instant now = Instant.now();
-        repository.consumeAllFor(phoneE164, now);
+        repository.consumeAllFor(phoneE164, purpose, now);
         String code = String.format("%06d", RANDOM.nextInt(1_000_000));
         repository.save(new OtpCode(phoneE164, hasher.hash(phoneE164, code),
-                OtpPurpose.PHONE_VERIFICATION, now.plus(properties.otpTtl()), now));
+                purpose, now.plus(properties.otpTtl()), now));
         long minutes = properties.otpTtl().toMinutes();
+        String action = purpose == OtpPurpose.PASSWORD_RESET ? "password reset" : "verification";
         smsSender.send(phoneE164,
-                "Your Horizon verification code is " + code + ". It expires in " + minutes + " minutes.");
+                "Your Horizon " + action + " code is " + code + ". It expires in " + minutes
+                        + " minutes.");
     }
 
     /**
-     * @return true only if this is the outstanding code for the phone, unexpired, not yet used and
-     *         not locked out; any false answer also burns one of the allowed attempts.
+     * @return true only if this is the outstanding code for the phone and purpose, unexpired, not
+     *         yet used and not locked out; any false answer also burns one of the allowed attempts.
      */
     @Transactional
-    boolean consume(String phoneE164, String code) {
-        OtpCode active = repository.findFirstByPhoneAndConsumedAtIsNullOrderByIdDesc(phoneE164)
+    boolean consume(String phoneE164, String code, OtpPurpose purpose) {
+        OtpCode active = repository
+                .findFirstByPhoneAndPurposeAndConsumedAtIsNullOrderByIdDesc(phoneE164, purpose)
                 .orElse(null);
         if (active == null) {
             return false;

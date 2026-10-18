@@ -10,11 +10,14 @@ import org.springframework.data.repository.query.Param;
 
 interface OtpCodeRepository extends JpaRepository<OtpCode, UUID> {
 
-    Optional<OtpCode> findFirstByPhoneAndConsumedAtIsNullOrderByIdDesc(String phone);
+    Optional<OtpCode> findFirstByPhoneAndPurposeAndConsumedAtIsNullOrderByIdDesc(String phone,
+            OtpPurpose purpose);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update OtpCode o set o.consumedAt = :now where o.phone = :phone and o.consumedAt is null")
-    int consumeAllFor(@Param("phone") String phone, @Param("now") Instant now);
+    @Query("update OtpCode o set o.consumedAt = :now "
+            + "where o.phone = :phone and o.purpose = :purpose and o.consumedAt is null")
+    int consumeAllFor(@Param("phone") String phone, @Param("purpose") OtpPurpose purpose,
+            @Param("now") Instant now);
 
     @Modifying
     @Query(value = "delete from otp_codes where id in "
