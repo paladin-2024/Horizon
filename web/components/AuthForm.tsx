@@ -186,9 +186,11 @@ const AuthForm = ({ type }:{ type: string}) => {
                 placeholder='Enter your password'
                 />
                 {type === 'sign-in' && (
-                    <Link href='/forgot-password' className='form-link self-end text-14'>
-                        Forgot password?
-                    </Link>
+                    <div className='flex justify-end'>
+                        <Link href='/forgot-password' className='form-link text-14'>
+                            Forgot password?
+                        </Link>
+                    </div>
                 )}
                 <div className='flex flex-col gap-4'>
 
