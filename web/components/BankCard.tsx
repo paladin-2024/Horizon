@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import Icon from "./Icon";
 import { Badge } from "./ui/badge";
 import Wifi02Icon from "@hugeicons/core-free-icons/Wifi02Icon";
@@ -7,7 +8,7 @@ import { formatMoney } from "@/lib/money";
 const BankCard = ({ account, showBalance = true }: BankCardProps) => {
   return (
     <div className="flex flex-col">
-      <div className="bank-card">
+      <Link href={`/my-banks/${account.id}`} className="bank-card">
         <div className="bank-card_content">
           <div>
             <h1 className="text-16 font-semibold text-white">{account.displayName}</h1>
@@ -43,7 +44,7 @@ const BankCard = ({ account, showBalance = true }: BankCardProps) => {
           alt=""
           className="pointer-events-none absolute left-0 top-0 opacity-60"
         />
-      </div>
+      </Link>
     </div>
   );
 };
