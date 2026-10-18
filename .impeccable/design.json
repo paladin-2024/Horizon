@@ -47,7 +47,7 @@
       "refersTo": "button-primary",
       "description": "The brand CTA: bank-gradient fill, white text, used for the single most important action on a form.",
       "html": "<button class=\"ds-btn-primary\">Add account</button>",
-      "css": ".ds-btn-primary { background: linear-gradient(90deg, #0179FE 0%, #4893FF 100%); color: #FFFFFF; font-weight: 600; font-size: 15px; line-height: 22px; padding: 10px 16px; border-radius: 8px; border: 1px solid #0179FE; box-shadow: 0px 1px 2px 0px rgba(16,24,40,0.05); transition: filter 0.15s ease; } .ds-btn-primary:hover { filter: brightness(1.05); } .ds-btn-primary:focus-visible { outline: 2px solid #0179FE; outline-offset: 2px; }"
+      "css": ".ds-btn-primary { background: linear-gradient(90deg, #0179FE 0%, #4893FF 100%); color: #FFFFFF; font-weight: 600; font-size: 15px; line-height: 22px; padding: 10px 16px; border-radius: 6px; border: 1px solid #0179FE; box-shadow: 0px 1px 2px 0px rgba(16,24,40,0.05); transition: filter 0.15s ease; } .ds-btn-primary:hover { filter: brightness(1.05); } .ds-btn-primary:focus-visible { outline: 2px solid #0179FE; outline-offset: 2px; }"
     },
     {
       "name": "Secondary Button",
@@ -55,7 +55,7 @@
       "refersTo": "button-secondary",
       "description": "De-emphasized action next to a primary one, e.g. 'View all'.",
       "html": "<button class=\"ds-btn-secondary\">View all</button>",
-      "css": ".ds-btn-secondary { background: #FFFFFF; color: #344054; font-weight: 600; font-size: 14px; line-height: 20px; padding: 10px 16px; border-radius: 8px; border: 1px solid #D0D5DD; transition: background 0.15s ease; } .ds-btn-secondary:hover { background: #FCFCFD; } .ds-btn-secondary:focus-visible { outline: 2px solid #0179FE; outline-offset: 2px; }"
+      "css": ".ds-btn-secondary { background: #FFFFFF; color: #344054; font-weight: 600; font-size: 14px; line-height: 20px; padding: 10px 16px; border-radius: 6px; border: 1px solid #D0D5DD; transition: background 0.15s ease; } .ds-btn-secondary:hover { background: #FCFCFD; } .ds-btn-secondary:focus-visible { outline: 2px solid #0179FE; outline-offset: 2px; }"
     },
     {
       "name": "Card",
@@ -63,7 +63,7 @@
       "refersTo": "card-default",
       "description": "Standard flat white card on the gray-25 page ground.",
       "html": "<div class=\"ds-card\"><p class=\"ds-card-label\">Total current balance</p><p class=\"ds-card-amount\">$12,480.32</p></div>",
-      "css": ".ds-card { background: #FFFFFF; border-radius: 12px; box-shadow: 0px 1px 3px 0px rgba(16,24,40,0.10), 0px 1px 2px 0px rgba(16,24,40,0.06); padding: 24px; } .ds-card-label { font-size: 14px; line-height: 20px; font-weight: 500; color: #475467; margin: 0 0 8px; } .ds-card-amount { font-size: 24px; line-height: 32px; font-weight: 600; color: #101828; margin: 0; }"
+      "css": ".ds-card { background: #FFFFFF; border-radius: 8px; box-shadow: 0px 1px 3px 0px rgba(16,24,40,0.10), 0px 1px 2px 0px rgba(16,24,40,0.06); padding: 24px; } .ds-card-label { font-size: 14px; line-height: 20px; font-weight: 500; color: #475467; margin: 0 0 8px; } .ds-card-amount { font-size: 24px; line-height: 32px; font-weight: 600; color: #101828; margin: 0; }"
     },
     {
       "name": "Text Input",
@@ -71,7 +71,7 @@
       "refersTo": "input-default",
       "description": "Standard form field: white fill, gray border, blue focus ring.",
       "html": "<div class=\"ds-field\"><label class=\"ds-label\">Account name</label><input class=\"ds-input\" placeholder=\"e.g. Salary account\" /></div>",
-      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; } .ds-label { font-size: 14px; line-height: 20px; font-weight: 500; color: #344054; } .ds-input { font-size: 15px; line-height: 22px; color: #101828; background: #FFFFFF; border: 1px solid #D0D5DD; border-radius: 8px; padding: 10px 14px; } .ds-input::placeholder { color: #667085; } .ds-input:focus-visible { outline: 2px solid #0179FE; outline-offset: 1px; border-color: #0179FE; }"
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; } .ds-label { font-size: 14px; line-height: 20px; font-weight: 500; color: #344054; } .ds-input { font-size: 15px; line-height: 22px; color: #101828; background: #FFFFFF; border: 1px solid #D0D5DD; border-radius: 6px; padding: 10px 14px; } .ds-input::placeholder { color: #667085; } .ds-input:focus-visible { outline: 2px solid #0179FE; outline-offset: 1px; border-color: #0179FE; }"
     },
     {
       "name": "Category Chip",
@@ -87,7 +87,7 @@
       "refersTo": "sidebar-link",
       "description": "The one place a list item gets a filled bank-gradient background: the active nav state.",
       "html": "<a class=\"ds-nav-item ds-nav-item--active\" href=\"#\">Home</a>",
-      "css": ".ds-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 9999px; font-size: 15px; line-height: 22px; font-weight: 600; color: #344054; } .ds-nav-item--active { background: linear-gradient(90deg, #0179FE 0%, #4893FF 100%); color: #FFFFFF; }"
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: #344054; } .ds-nav-item--active { background: linear-gradient(90deg, #0179FE 0%, #4893FF 100%); color: #FFFFFF; }"
     },
     {
       "name": "Stat Row Icon Badge",

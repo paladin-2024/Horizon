@@ -27,7 +27,7 @@ const StatCard = ({
   delta?: { direction: "up" | "down"; label: string };
 }) => {
   return (
-    <Card className="flex items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:p-5">
+    <Card className="flex items-center gap-4 p-4 sm:p-5">
       <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-full", TINT[tint].bg)}>
         <Icon icon={icon} size={20} className={TINT[tint].text} />
       </span>

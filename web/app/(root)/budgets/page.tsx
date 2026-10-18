@@ -44,7 +44,7 @@ const Budgets = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <Card className="flex flex-col gap-4 rounded-xl border border-gray-200 p-6 shadow-chart lg:col-span-3">
+        <Card className="flex flex-col gap-4 p-6 lg:col-span-3">
           <div>
             <h2 className="header-2">Income vs. spending</h2>
             <p className="text-14 text-gray-500">Last 6 months</p>
@@ -54,7 +54,7 @@ const Budgets = () => {
           </div>
         </Card>
 
-        <Card className="flex flex-col gap-4 rounded-xl border border-gray-200 p-6 shadow-chart lg:col-span-2">
+        <Card className="flex flex-col gap-4 p-6 lg:col-span-2">
           <div>
             <h2 className="header-2">Spending by category</h2>
             <p className="text-14 text-gray-500">This month</p>

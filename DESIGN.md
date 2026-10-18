@@ -61,10 +61,10 @@ typography:
     fontWeight: 600
     lineHeight: "16px"
 rounded:
-  sm: "8px"
-  md: "10px"
-  lg: "12px"
-  xl: "18px"
+  sm: "4px"
+  md: "6px"
+  lg: "8px"
+  xl: "12px"
   full: "9999px"
 spacing:
   xs: "4px"
@@ -105,7 +105,7 @@ components:
 
 Horizon reads as a well-kept bank statement, not a flashy fintech pitch deck: white cards, one confident blue, generous whitespace, numbers that are never crowded. That's the resting state of every summary screen — home, balances, profile. But the same system has to work as a precise instrument when a user leans in to check something specific: transaction lists, category breakdowns, budgets. There density is allowed to rise — tighter row rhythm, more numbers on screen — without ever reaching for a different visual language. One palette, one type family, one radius system; only density and information scale with the task.
 
-The system is deliberately quiet about itself: no gradients-as-decoration, no icon-tile soup, no drop shadows pretending to be depth. The one place it allows itself a signature move is the brand-blue gradient (`bank-gradient`), reserved for the bank card, the active sidebar state, and primary CTAs — everywhere else stays flat white and neutral gray.
+The system is deliberately quiet about itself: no gradients-as-decoration, no icon-tile soup, no drop shadows pretending to be depth. The one place it allows itself a signature move is the brand-blue gradient (`bank-gradient`), reserved for the bank card, the active sidebar state, primary CTAs, and the Home balance hero — everywhere else stays flat white and neutral gray.
 
 **Key Characteristics:**
 - Calm, high-trust, numbers-first — never loud or "startup-y"
@@ -180,12 +180,12 @@ Flat by default, with soft ambient shadow doing all elevation work — no border
 
 ## Shapes
 
-Corners are soft but restrained: the base radius is 12px (`--radius: 0.75rem`), stepping down to 10px (`md`) and 8px (`sm`) for tighter controls like inputs and small buttons. The bank card is the one deliberate exception, at 18–20px, giving it a slightly more "physical card" feel than the rest of the flat UI. Avatars, category dots, chips, stat-row icon badges, and the active sidebar/nav item are fully rounded (`rounded-full`) — a small, deliberately-borrowed pill language for anything that marks "selected" or "a unit of one thing," layered on top of the 8–18px scale everything else uses. Borders, where used, are always 1px and light (`gray-200`/`gray-300`) — never a visible "designed" border weight.
+Corners are tight, not soft: the base radius is 8px (`--radius: 0.5rem`), stepping down to 6px (`md`) and 4px (`sm`) for tighter controls like inputs and small buttons. The bank card and the Home balance hero are the one deliberate exception, at 12px (`rounded-xl`), giving them a touch more presence than the flat 8px cards around them — never larger. Avatars, category dots, chips, and stat-row icon badges are fully rounded (`rounded-full`) — a small, deliberately-borrowed pill language for anything that marks "a unit of one thing." The active sidebar/nav item uses the same 8px base radius as everything else (`rounded-lg`), not a pill — a full-round selection background read as oversized against the compact nav row. Borders, where used, are always 1px and light (`gray-200`/`gray-300`) — never a visible "designed" border weight.
 
 ## Components
 
 ### Buttons
-- **Shape:** 8–10px radius (shadcn `rounded-md`), matching the sm/md shape tokens.
+- **Shape:** 4–6px radius (shadcn `rounded-md`), matching the sm/md shape tokens.
 - **Primary (brand CTA):** The `bank-gradient` background (`#0179FE → #4893FF`), white text, `shadow-form`, semibold 16px label — used for the single most important action on a form (`form-btn`, `plaidlink-primary`, `payment-transfer_btn`).
 - **Default (shadcn):** Solid `primary` (same blue, flat, no gradient) with white text for ordinary in-flow actions; `outline`/`secondary`/`ghost`/`link` variants exist and follow shadcn's standard state behavior (hover darkens/lightens by ~10–20% opacity).
 - **View-all / tertiary:** White background, `gray-300` border, `gray-700` text, semibold 14px — used for a de-emphasized action next to a primary one (`view-all-btn`).
@@ -198,7 +198,7 @@ Corners are soft but restrained: the base radius is 12px (`--radius: 0.75rem`), 
 - **Internal Padding:** `p-4 sm:p-6` for compact cards (total balance), `px-6 py-12` for empty states, `p-6/p-8` for page-level containers.
 
 ### Inputs / Fields
-- **Style:** White fill, `gray-300` 1px border, 8px radius, 15px text (`text-16` ≈ 15px/22px), placeholder in `gray-500`.
+- **Style:** White fill, `gray-300` 1px border, 6px radius, 15px text (`text-16` ≈ 15px/22px), placeholder in `gray-500`.
 - **Focus:** Ring in Bank Blue (`--ring`), standard shadcn focus-visible treatment — no custom glow.
 - **Password fields:** Carry a view/hide toggle button (Hugeicons `ViewIcon`/`ViewOffIcon`) inside the field, right-aligned.
 - **Error:** 12px red (`text-red-500`) message directly under the field (`form-message`), no red border treatment currently applied to the input itself.
@@ -215,7 +215,7 @@ Corners are soft but restrained: the base radius is 12px (`--radius: 0.75rem`), 
 Every functional icon that isn't a plain nav glyph sits inside a fully-rounded, softly-tinted circle — never bare on the page: `StatCard`'s leading icon, `QuickAction` tiles (`Add a bank` / `Transfer funds` / `Budgets` / `Profile` on Home), notification-kind icons, the goal-complete checkmark. The tint is always one of the semantic families (blue/success/pink), sized ~40–48px, icon at roughly half that. This is a borrowed convention from dashboard-template references, deliberately kept — but always in Horizon's own palette, never the reference's colors.
 
 ### Bank Card (signature component)
-The one place the system allows a fully-saturated gradient surface: an 18–20px-radius card in the `bank-gradient` blue, white text, masked account number, and a decorative diagonal-lines texture image bleeding off the top-left corner. This card's visual weight is intentional — it's the one element on the page allowed to look like a "real" physical bank card, everything else around it stays flat and quiet.
+The one place the system allows a fully-saturated gradient surface: a 12px-radius card in the `bank-gradient` blue, white text, masked account number, and a decorative diagonal-lines texture image bleeding off the top-left corner. This card's visual weight is intentional — it's the one element on the page allowed to look like a "real" physical bank card, everything else around it stays flat and quiet.
 
 ## Do's and Don'ts
 
@@ -230,6 +230,6 @@ The one place the system allows a fully-saturated gradient surface: an 18–20px
 ### Don't:
 - **Don't** introduce a second typeface. Hierarchy comes from size/weight/color within Plus Jakarta Sans.
 - **Don't** add drop shadows, glassmorphism (outside the one existing `.glassmorphism` utility, currently unused on any shipped page), or heavy borders as a substitute for the flat-plus-soft-shadow elevation model.
-- **Don't** use the `bank-gradient` surface anywhere but the bank card, the active sidebar item, and primary CTA buttons — it's a signature, not a background pattern.
-- **Don't** invent a new radius value outside the 8/10/12/18px scale (plus full-round for chips/avatars).
+- **Don't** use the `bank-gradient` surface anywhere but the bank card, the active sidebar item, primary CTA buttons, and the Home balance hero — it's a signature, not a background pattern.
+- **Don't** invent a new radius value outside the 4/6/8/12px scale (plus full-round for chips/avatars).
 - **Don't** imply live, automatic account sync in copy or iconography (e.g. a spinning "syncing" state) — linking is manual today; say "add" or "update," not "connect" or "sync."

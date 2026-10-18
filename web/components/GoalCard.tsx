@@ -22,7 +22,7 @@ const GoalCard = ({
   const complete = pct >= 100;
 
   return (
-    <Card className="flex flex-col gap-4 rounded-xl border border-gray-200 p-5 shadow-chart">
+    <Card className="flex flex-col gap-4 p-5">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-16 font-semibold text-gray-900">{name}</h3>

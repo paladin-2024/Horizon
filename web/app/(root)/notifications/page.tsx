@@ -30,7 +30,7 @@ const Notifications = () => {
             <div
               key={n.id}
               className={cn(
-                'flex items-start gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:p-5',
+                'flex items-start gap-4 rounded-lg border border-gray-200 p-4 shadow-chart sm:p-5',
                 !n.read && 'bg-blue-25/40'
               )}
             >
