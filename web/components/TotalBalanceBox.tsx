@@ -17,9 +17,9 @@ const TotalBalanceBox = ({ accounts = [], totals = [] }: TotalBalanceBoxProps) =
         aria-hidden
         className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-white/10 blur-2xl"
       />
-      <div className="relative flex flex-1 flex-col gap-3">
+      <div className="relative flex flex-1 flex-col gap-1">
         <p className="text-14 font-medium text-white/70">
-          {primary ? `Total balance (${primary.currency})` : "Total balance"}
+          Total balance · {accounts.length} linked account{accounts.length === 1 ? "" : "s"}
         </p>
 
         <div className="flex items-center gap-2 text-36 font-bold text-white">
@@ -30,19 +30,15 @@ const TotalBalanceBox = ({ accounts = [], totals = [] }: TotalBalanceBoxProps) =
           )}
         </div>
 
-        <p className="text-14 font-medium text-white/70">
-          {accounts.length} linked account{accounts.length === 1 ? "" : "s"}
-        </p>
-
         {otherTotals.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="mt-3 flex flex-col gap-1.5 border-t border-white/15 pt-3">
+            <p className="text-10 font-semibold uppercase tracking-wide text-white/50">
+              Also in {otherTotals.length === 1 ? "another currency" : "other currencies"}
+            </p>
             {otherTotals.map((total) => (
-              <span
-                key={total.currency}
-                className="rounded-full bg-white/15 px-3 py-1 text-12 font-semibold text-white"
-              >
+              <p key={total.currency} className="text-16 font-semibold text-white/90">
                 {formatMoney(total.amountMinor, total.currency)}
-              </span>
+              </p>
             ))}
           </div>
         )}
