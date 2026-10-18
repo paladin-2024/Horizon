@@ -31,6 +31,17 @@ export const SAMPLE_CATEGORY_SPEND: { name: string; amountMinor: number; tint: "
   { name: "Everything else", amountMinor: 19_500_000, tint: "success" },
 ];
 
+// Monthly limits paired with SAMPLE_CATEGORY_SPEND by name, for the budget-limit
+// progress rows. Transport is deliberately over its limit — a real budgeting
+// page needs to show that state, not just the comfortable ones.
+export const SAMPLE_BUDGET_LIMITS: { name: string; limitMinor: number }[] = [
+  { name: "Rent & bills", limitMinor: 70_000_000 },
+  { name: "Groceries", limitMinor: 35_000_000 },
+  { name: "Transport", limitMinor: 15_000_000 },
+  { name: "Mobile money fees", limitMinor: 10_000_000 },
+  { name: "Everything else", limitMinor: 25_000_000 },
+];
+
 export const SAMPLE_GOALS: {
   id: string;
   name: string;
