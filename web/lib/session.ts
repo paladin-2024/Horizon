@@ -10,13 +10,14 @@ export const PATH_HEADER = "x-hz-path";
 export const SIGN_IN_PATH = "/sign-in";
 export const SIGN_UP_PATH = "/sign-up";
 export const VERIFY_PATH = "/verify";
+export const FORGOT_PASSWORD_PATH = "/forgot-password";
 export const REFRESH_SESSION_PATH = "/refresh-session";
 export const SESSION_EXPIRED_URL = "/sign-in?session=expired";
 
 // Pages that signed-in users are sent away from.
 const GUEST_ONLY_PATHS = [SIGN_IN_PATH, SIGN_UP_PATH];
 // Pages that need no session.
-const PUBLIC_PATHS = [...GUEST_ONLY_PATHS, VERIFY_PATH, REFRESH_SESSION_PATH];
+const PUBLIC_PATHS = [...GUEST_ONLY_PATHS, VERIFY_PATH, FORGOT_PASSWORD_PATH, REFRESH_SESSION_PATH];
 
 function isUnder(pathname: string, base: string): boolean {
   return pathname === base || pathname.startsWith(`${base}/`);

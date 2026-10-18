@@ -41,6 +41,10 @@ const AuthForm = ({ type }:{ type: string}) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            firstName: "",
+            lastName: "",
+            nationalId: "",
+            phone: "",
             email: "",
             password: "",
         },
@@ -181,6 +185,11 @@ const AuthForm = ({ type }:{ type: string}) => {
                 label='Password'
                 placeholder='Enter your password'
                 />
+                {type === 'sign-in' && (
+                    <Link href='/forgot-password' className='form-link self-end text-14'>
+                        Forgot password?
+                    </Link>
+                )}
                 <div className='flex flex-col gap-4'>
 
                 {formError && (

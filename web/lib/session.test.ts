@@ -19,7 +19,7 @@ describe("routeDecision without an access cookie", () => {
   });
 
   it("lets the auth pages through", () => {
-    for (const pathname of ["/sign-in", "/sign-up", "/verify", REFRESH_SESSION_PATH]) {
+    for (const pathname of ["/sign-in", "/sign-up", "/verify", "/forgot-password", REFRESH_SESSION_PATH]) {
       expect(routeDecision({ pathname, ...guest })).toBeNull();
     }
   });

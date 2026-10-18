@@ -108,17 +108,27 @@ const PHONE_MESSAGE = "Enter a valid phone number, for example +256771234567";
 
 export const authFormSchema = (type:string)  => z.object({
   //sih Up
-  firstName:type === "sign-in" ? z.string().optional() : z.string().min(3),
-  lastName: type === "sign-in" ? z.string().optional() :z.string().min(3),
-  nationalId: type === "sign-in" ? z.string().optional() :z.string().min(3),
+  firstName:type === "sign-in" ? z.string().optional() : z.string().min(3, "Enter your first name"),
+  lastName: type === "sign-in" ? z.string().optional() :z.string().min(3, "Enter your last name"),
+  nationalId: type === "sign-in" ? z.string().optional() :z.string().min(3, "Enter your national ID number"),
   phone:
     type === "sign-in"
       ? z.string().optional()
       : z.string().refine(isValidPhone, { message: PHONE_MESSAGE }),
   //both
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("Enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 })
+
+export const forgotPasswordFormSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+});
+
+export const resetPasswordFormSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+  code: z.string().regex(/^\d{6}$/, "Enter the 6-digit code"),
+  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 export const otpFormSchema = z.object({
   phone: z.string().refine(isValidPhone, { message: PHONE_MESSAGE }),
