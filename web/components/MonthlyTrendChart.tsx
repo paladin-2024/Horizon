@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from "recharts";
 import { ChartContainer, type ChartConfig } from "./ui/chart";
 import { formatMoney } from "@/lib/money";
@@ -25,6 +25,14 @@ const MonthlyTrendChart = ({
   currency: string;
 }) => {
   const [metric, setMetric] = useState<Metric>("income");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(0);
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver((entries) => setChartWidth(entries[0].contentRect.width));
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
   const highlightIndex = data.length - 1;
   const chartData = data.map((d, i) => ({
     month: d.month,
@@ -47,11 +55,17 @@ const MonthlyTrendChart = ({
     const cx = x + width / 2;
     const text = formatMoney(value, currency);
     const boxWidth = Math.max(80, text.length * 6.5 + 20);
+    // Clamp the bubble inside the chart's own width (margin left/right: 4) so it
+    // never clips off-screen when the highlighted bar sits near the right edge —
+    // the common case, since the highlight is always the most recent month.
+    const maxLeft = chartWidth > 0 ? chartWidth - boxWidth - 4 : Infinity;
+    const left = Math.min(Math.max(cx - boxWidth / 2, 4), maxLeft);
+    const boxCenter = left + boxWidth / 2;
     return (
       <g>
-        <rect x={cx - boxWidth / 2} y={y - 34} width={boxWidth} height={26} rx={8} fill="#101828" />
+        <rect x={left} y={y - 34} width={boxWidth} height={26} rx={8} fill="#101828" />
         <polygon points={`${cx - 5},${y - 8} ${cx + 5},${y - 8} ${cx},${y - 2}`} fill="#101828" />
-        <text x={cx} y={y - 17} textAnchor="middle" fill="#fff" fontSize={12} fontWeight={600} fontFamily="var(--font-sans)">
+        <text x={boxCenter} y={y - 17} textAnchor="middle" fill="#fff" fontSize={12} fontWeight={600} fontFamily="var(--font-sans)">
           {text}
         </text>
       </g>
@@ -76,7 +90,7 @@ const MonthlyTrendChart = ({
         ))}
       </div>
 
-      <ChartContainer config={config} className="aspect-auto h-64 w-full">
+      <ChartContainer ref={containerRef} config={config} className="aspect-auto h-64 w-full">
         <BarChart data={chartData} margin={{ top: 28, right: 4, left: 4, bottom: 4 }}>
           <CartesianGrid vertical={false} stroke="#F2F4F7" />
           <XAxis
