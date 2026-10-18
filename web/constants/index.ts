@@ -6,6 +6,7 @@ import PieChart01Icon from "@hugeicons/core-free-icons/PieChart01Icon";
 import Target02Icon from "@hugeicons/core-free-icons/Target02Icon";
 import Notification03Icon from "@hugeicons/core-free-icons/Notification03Icon";
 import UserIcon from "@hugeicons/core-free-icons/UserIcon";
+import Settings02Icon from "@hugeicons/core-free-icons/Settings02Icon";
 
 export const sidebarLinks = [
   {
@@ -46,7 +47,12 @@ export const sidebarLinks = [
   {
     icon: UserIcon,
     route: "/profile",
-    label: "Profile & Settings",
+    label: "Profile",
+  },
+  {
+    icon: Settings02Icon,
+    route: "/settings",
+    label: "Settings",
   },
 ];
 
