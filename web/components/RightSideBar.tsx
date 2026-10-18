@@ -34,15 +34,10 @@ const RightSideBar = ({ user, accounts }: RightSidebarProps) => {
             </Link>
           </div>
           {preview.length > 0 ? (
-            <div className="relative flex flex-1 flex-col items-center justify-center gap-5">
-              <div className="relative z-10">
-                <BankCard account={preview[0]} showBalance={false} />
-              </div>
-              {preview[1] && (
-                <div className="absolute right-0 top-8 z-0 w-[90%]">
-                  <BankCard account={preview[1]} showBalance={false} />
-                </div>
-              )}
+            <div className="flex flex-col items-center gap-4">
+              {preview.map((account) => (
+                <BankCard key={account.id} account={account} showBalance={false} />
+              ))}
             </div>
           ) : (
             <p className="text-14 text-gray-500">

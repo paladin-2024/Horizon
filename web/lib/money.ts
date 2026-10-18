@@ -2,15 +2,16 @@
 // Every supported currency (UGX, CDF, USD) uses 2 decimal minor units, matching
 // how the backend's Money record stores every currency uniformly.
 
-const CURRENCY_LOCALE: Record<string, string> = {
-  UGX: "en-UG",
-  CDF: "fr-CD",
-  USD: "en-US",
-};
+// One locale for every currency, deliberately: the UI's language is English
+// throughout, so a per-currency locale (e.g. fr-CD for CDF) produces
+// space-grouped, comma-decimal numbers that look inconsistent and broken
+// next to UGX/USD's comma-grouped ones on the same screen — not more correct,
+// just mismatched.
+const NUMBER_LOCALE = "en-US";
 
-/** "UGX 300,000.00". Falls back to a generic locale for an unrecognized currency. */
+/** "UGX 300,000.00". */
 export function formatMoney(amountMinor: number, currency: string): string {
-  const formatter = new Intl.NumberFormat(CURRENCY_LOCALE[currency] ?? "en-US", {
+  const formatter = new Intl.NumberFormat(NUMBER_LOCALE, {
     style: "currency",
     currency,
     currencyDisplay: "code",
