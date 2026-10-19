@@ -40,8 +40,8 @@ const AccountOverview = ({ accounts, totals }: { accounts: ApiAccount[]; totals:
               className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 p-3 transition-colors hover:border-gray-200 hover:bg-gray-50"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-blue-25 text-blue-700">
-                  <Icon icon={BankIcon} size={18} />
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-25 text-blue-700">
+                  <Icon icon={BankIcon} size={20} />
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-14 font-semibold text-gray-900">{account.displayName}</p>
@@ -51,18 +51,25 @@ const AccountOverview = ({ accounts, totals }: { accounts: ApiAccount[]; totals:
                 </div>
               </div>
               <div className="shrink-0 text-right">
-                <p className="text-14 font-semibold text-gray-900">
+                <p className="text-16 font-bold text-gray-900">
                   {formatMoney(account.balance.amountMinor, account.balance.currency)}
                 </p>
-                <Badge
-                  className={
-                    account.status === "ACTIVE"
-                      ? "border-transparent bg-success-25 text-10 text-success-700 hover:bg-success-25"
-                      : "border-transparent bg-gray-100 text-10 text-gray-600 hover:bg-gray-100"
-                  }
-                >
-                  {account.status === "ACTIVE" ? "Active" : "Archived"}
-                </Badge>
+                <div className="flex items-center justify-end gap-1.5">
+                  {account.balance.currency === primary.currency && (
+                    <span className="text-10 text-gray-400">
+                      {Math.round((account.balance.amountMinor / primary.amountMinor) * 100)}% of total
+                    </span>
+                  )}
+                  <Badge
+                    className={
+                      account.status === "ACTIVE"
+                        ? "border-transparent bg-success-25 text-10 text-success-700 hover:bg-success-25"
+                        : "border-transparent bg-gray-100 text-10 text-gray-600 hover:bg-gray-100"
+                    }
+                  >
+                    {account.status === "ACTIVE" ? "Active" : "Archived"}
+                  </Badge>
+                </div>
               </div>
             </Link>
           ))}
