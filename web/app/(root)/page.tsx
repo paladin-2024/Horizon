@@ -6,6 +6,7 @@ import EmptyState from '@/components/EmptyState';
 import QuickAction from '@/components/QuickAction';
 import StatCard from '@/components/StatCard';
 import AccountOverview from '@/components/AccountOverview';
+import RefreshButton from '@/components/RefreshButton';
 import { cookieHeader, fetchAccounts, fetchMe } from '@/lib/api/server';
 import BankIcon from '@hugeicons/core-free-icons/BankIcon';
 import SentIcon from '@hugeicons/core-free-icons/SentIcon';
@@ -27,12 +28,15 @@ async function Home() {
     <section className='home'>
         <div className='home-content'>
             <header className='home-header'>
-                <HeaderBox
-                    type="greeting"
-                    title="Welcome"
-                    user={loggedIn?.firstName || 'there'}
-                    subtext="Access and manage your account and transactions efficiently."
-                />
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <HeaderBox
+                        type="greeting"
+                        title="Welcome"
+                        user={loggedIn?.firstName || 'there'}
+                        subtext="Access and manage your account and transactions efficiently."
+                    />
+                    <RefreshButton />
+                </div>
 
                 <TotalBalanceBox
                     accounts={accounts}
