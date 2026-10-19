@@ -5,6 +5,7 @@ import TotalBalanceBox from '@/components/TotalBalanceBox';
 import EmptyState from '@/components/EmptyState';
 import QuickAction from '@/components/QuickAction';
 import StatCard from '@/components/StatCard';
+import AccountOverview from '@/components/AccountOverview';
 import { cookieHeader, fetchAccounts, fetchMe } from '@/lib/api/server';
 import BankIcon from '@hugeicons/core-free-icons/BankIcon';
 import SentIcon from '@hugeicons/core-free-icons/SentIcon';
@@ -40,11 +41,15 @@ async function Home() {
             </header>
 
             {accounts.length > 0 && (
-                <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <StatCard icon={BankIcon} label="Linked accounts" value={String(accounts.length)} tint="blue" />
-                    <StatCard icon={CheckmarkCircle02Icon} label="Active accounts" value={String(activeCount)} tint="success" />
-                    <StatCard icon={Exchange02Icon} label="Currencies" value={String(totals.length)} tint="pink" />
-                </section>
+                <>
+                    <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <StatCard icon={BankIcon} label="Linked accounts" value={String(accounts.length)} tint="blue" />
+                        <StatCard icon={CheckmarkCircle02Icon} label="Active accounts" value={String(activeCount)} tint="success" />
+                        <StatCard icon={Exchange02Icon} label="Currencies" value={String(totals.length)} tint="pink" />
+                    </section>
+
+                    <AccountOverview accounts={accounts} totals={totals} />
+                </>
             )}
 
             <section className="flex flex-wrap gap-6 sm:gap-10">
