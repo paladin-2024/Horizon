@@ -1,6 +1,8 @@
 import DoughnutsChart from './DoughnutChart'
 import AnimatedCounter from './AnimatedCounter'
+import Icon from './Icon'
 import { formatMoney } from '@/lib/money'
+import BankIcon from '@hugeicons/core-free-icons/BankIcon'
 
 const TotalBalanceBox = ({ accounts = [], totals = [] }: TotalBalanceBoxProps) => {
   // The largest-value currency leads the chart; every currency still gets its own total below.
@@ -45,7 +47,16 @@ const TotalBalanceBox = ({ accounts = [], totals = [] }: TotalBalanceBoxProps) =
       </div>
 
       <div className="relative flex size-32 shrink-0 items-center justify-center self-center sm:size-36">
-        <DoughnutsChart accounts={primaryAccounts} tone="dark" />
+        {primaryAccounts.length > 1 ? (
+          <DoughnutsChart accounts={primaryAccounts} tone="dark" />
+        ) : (
+          // A pie with one slice (or none) is always 100% one color — it conveys
+          // nothing, so it isn't worth the confusing empty-ring look. A plain
+          // icon badge is honest about there being nothing to compare yet.
+          <span className="flex size-full items-center justify-center rounded-full bg-white/10">
+            <Icon icon={BankIcon} size={28} className="text-white/70" />
+          </span>
+        )}
       </div>
     </div>
   )
