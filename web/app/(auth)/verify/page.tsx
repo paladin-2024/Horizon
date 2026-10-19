@@ -1,6 +1,6 @@
 import OtpForm from '@/components/OtpForm'
+import AuthIllustrationPanel from '@/components/AuthIllustrationPanel'
 import { isValidPhone, normalizePhone } from '@/lib/phone'
-import React from 'react'
 
 async function Verify({
   searchParams,
@@ -12,8 +12,15 @@ async function Verify({
   const validPhone = raw && isValidPhone(raw) ? normalizePhone(raw) : undefined
 
   return (
-    <section className='flex-center size-full max-sm:px-6'>
-      <OtpForm phone={validPhone}/>
+    <section className='flex min-h-screen w-full'>
+      <div className='no-scrollbar flex w-full items-start justify-center max-sm:px-6 lg:h-screen lg:w-1/2 lg:overflow-y-auto'>
+        <OtpForm phone={validPhone} />
+      </div>
+      <AuthIllustrationPanel
+        illustration="/illustrations/sign-up.svg"
+        headline="One last step"
+        tagline="Verifying your phone keeps your accounts and balances secure."
+      />
     </section>
   )
 }

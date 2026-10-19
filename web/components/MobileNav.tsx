@@ -4,6 +4,8 @@ import{
     SheetContent,
     SheetTrigger,
     SheetClose,
+    SheetTitle,
+    SheetDescription,
   } from "@/components/ui/sheet"
 import { sidebarLinks } from "@/constants"
 import { cn } from "@/lib/utils"
@@ -17,7 +19,7 @@ import { Avatar, AvatarFallback } from "./ui/avatar"
 const MobileNav = ({user}: MobileNavProps) => {
     const pathname=usePathname();
   return (
-    <section className="w-full max-w-[264px">
+    <section className="w-full max-w-[264px]">
         <Sheet>
 
             <SheetTrigger>
@@ -25,6 +27,8 @@ const MobileNav = ({user}: MobileNavProps) => {
             </SheetTrigger>
 
             <SheetContent side="left" className="bordern-one bg-white">
+            <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+            <SheetDescription className="sr-only">Links to every page in Horizon</SheetDescription>
 
             <Link  href="/" className='cursor-pointer flex items-center gap-1 px-4'>
             <Image

@@ -13,6 +13,12 @@ export const resendOtp = (request: ResendOtpRequest) =>
 export const login = (request: LoginRequest) =>
   apiFetch<void>("/auth/login", { method: "POST", body: request });
 
+export const forgotPassword = (request: ForgotPasswordRequest) =>
+  apiFetch<void>("/auth/forgot-password", { method: "POST", body: request });
+
+export const resetPassword = (request: ResetPasswordRequest) =>
+  apiFetch<void>("/auth/reset-password", { method: "POST", body: request });
+
 /** Rotates the cookies. Resolves true on success, false on failure, never throws. */
 export const refresh = refreshSession;
 

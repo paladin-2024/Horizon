@@ -22,3 +22,42 @@ export async function fetchMe(cookieHeaderValue: string): Promise<ApiUser | null
   if (!res.ok) throw new Error(`GET /auth/me failed with status ${res.status}`);
   return (await res.json()) as ApiUser;
 }
+
+/**
+ * GET /accounts with the visitor's cookies. The (root) layout has already
+ * confirmed the session via fetchMe before any page using this runs, so a 401
+ * here is unexpected and throws like any other failure.
+ */
+export async function fetchAccounts(cookieHeaderValue: string): Promise<AccountListResponse> {
+  const res = await fetch(`${apiBaseUrl()}/api/v1/accounts`, {
+    headers: { Accept: "application/json", Cookie: cookieHeaderValue },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`GET /accounts failed with status ${res.status}`);
+  return (await res.json()) as AccountListResponse;
+}
+
+/** GET /accounts/{id} with the visitor's cookies. Returns null on a 404 (missing or another user's account). */
+export async function fetchAccount(cookieHeaderValue: string, id: string): Promise<ApiAccount | null> {
+  const res = await fetch(`${apiBaseUrl()}/api/v1/accounts/${id}`, {
+    headers: { Accept: "application/json", Cookie: cookieHeaderValue },
+    cache: "no-store",
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GET /accounts/${id} failed with status ${res.status}`);
+  return (await res.json()) as ApiAccount;
+}
+
+/** GET /institutions with the visitor's cookies. */
+export async function fetchInstitutions(
+  cookieHeaderValue: string,
+  country?: InstitutionCountry
+): Promise<InstitutionListResponse> {
+  const query = country ? `?country=${country}` : "";
+  const res = await fetch(`${apiBaseUrl()}/api/v1/institutions${query}`, {
+    headers: { Accept: "application/json", Cookie: cookieHeaderValue },
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`GET /institutions failed with status ${res.status}`);
+  return (await res.json()) as InstitutionListResponse;
+}

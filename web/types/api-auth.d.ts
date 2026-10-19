@@ -28,6 +28,16 @@ declare type LoginRequest = {
   password: string;
 };
 
+declare type ForgotPasswordRequest = {
+  email: string;
+};
+
+declare type ResetPasswordRequest = {
+  email: string;
+  code: string;
+  newPassword: string;
+};
+
 /** GET /auth/me */
 declare type ApiUser = {
   id: string;

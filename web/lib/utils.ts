@@ -1,4 +1,3 @@
-/* eslint-disable no-prototype-builtins */
 import { type ClassValue, clsx } from "clsx";
 import qs from "query-string";
 import { twMerge } from "tailwind-merge";
@@ -77,12 +76,6 @@ export function formatAmount(amount: number): string {
   return formatter.format(amount);
 }
 
-export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
-
-export const removeSpecialCharacters = (value: string) => {
-  return value.replace(/[^\w\s]/gi, "");
-};
-
 interface UrlQueryParams {
   params: string;
   key: string;
@@ -103,83 +96,6 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   );
 }
 
-export function getAccountTypeColors(type: AccountTypes) {
-  switch (type) {
-    case "depository":
-      return {
-        bg: "bg-blue-25",
-        lightBg: "bg-blue-100",
-        title: "text-blue-900",
-        subText: "text-blue-700",
-      };
-
-    case "credit":
-      return {
-        bg: "bg-success-25",
-        lightBg: "bg-success-100",
-        title: "text-success-900",
-        subText: "text-success-700",
-      };
-
-    default:
-      return {
-        bg: "bg-green-25",
-        lightBg: "bg-green-100",
-        title: "text-green-900",
-        subText: "text-green-700",
-      };
-  }
-}
-
-export function countTransactionCategories(
-  transactions: Transaction[]
-): CategoryCount[] {
-  const categoryCounts: { [category: string]: number } = {};
-  let totalCount = 0;
-
-  // Iterate over each transaction
-  transactions &&
-    transactions.forEach((transaction) => {
-      // Extract the category from the transaction
-      const category = transaction.category;
-
-      // If the category exists in the categoryCounts object, increment its count
-      if (categoryCounts.hasOwnProperty(category)) {
-        categoryCounts[category]++;
-      } else {
-        // Otherwise, initialize the count to 1
-        categoryCounts[category] = 1;
-      }
-
-      // Increment total count
-      totalCount++;
-    });
-
-  // Convert the categoryCounts object to an array of objects
-  const aggregatedCategories: CategoryCount[] = Object.keys(categoryCounts).map(
-    (category) => ({
-      name: category,
-      count: categoryCounts[category],
-      totalCount,
-    })
-  );
-
-  // Sort the aggregatedCategories array by count in descending order
-  aggregatedCategories.sort((a, b) => b.count - a.count);
-
-  return aggregatedCategories;
-}
-
-export function extractCustomerIdFromUrl(url: string) {
-  // Split the URL string by '/'
-  const parts = url.split("/");
-
-  // Extract the last part, which represents the customer ID
-  const customerId = parts[parts.length - 1];
-
-  return customerId;
-}
-
 export function encryptId(id: string) {
   return btoa(id);
 }
@@ -188,37 +104,46 @@ export function decryptId(id: string) {
   return atob(id);
 }
 
-export const getTransactionStatus = (date: Date) => {
-  const today = new Date();
-  const twoDaysAgo = new Date(today);
-  twoDaysAgo.setDate(today.getDate() - 2);
-
-  return date > twoDaysAgo ? "Processing" : "Success";
-};
-
-
 const PHONE_MESSAGE = "Enter a valid phone number, for example +256771234567";
 
 export const authFormSchema = (type:string)  => z.object({
   //sih Up
-  firstName:type === "sign-in" ? z.string().optional() : z.string().min(3),
-  lastName: type === "sign-in" ? z.string().optional() :z.string().min(3),
-  address1: type === "sign-in" ? z.string().optional() :z.string().max(50),
-  city: type === "sign-in" ? z.string().optional() :z.string().min(3).max(15),
-  state: type === "sign-in" ? z.string().optional() :z.string().min(3).max(15),
-  postalCode: type === "sign-in" ? z.string().optional() :z.string().min(3).max(6),
-  dateOfBirth: type === "sign-in" ? z.string().optional() :z.string().min(3),
-  nationalId: type === "sign-in" ? z.string().optional() :z.string().min(3),
+  firstName:type === "sign-in" ? z.string().optional() : z.string().min(3, "Enter your first name"),
+  lastName: type === "sign-in" ? z.string().optional() :z.string().min(3, "Enter your last name"),
+  nationalId: type === "sign-in" ? z.string().optional() :z.string().min(3, "Enter your national ID number"),
   phone:
     type === "sign-in"
       ? z.string().optional()
       : z.string().refine(isValidPhone, { message: PHONE_MESSAGE }),
   //both
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email("Enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 })
+
+export const forgotPasswordFormSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+});
+
+export const resetPasswordFormSchema = z.object({
+  email: z.string().email("Enter a valid email address"),
+  code: z.string().regex(/^\d{6}$/, "Enter the 6-digit code"),
+  newPassword: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 export const otpFormSchema = z.object({
   phone: z.string().refine(isValidPhone, { message: PHONE_MESSAGE }),
   code: z.string().regex(/^\d{6}$/, "Enter the 6-digit code"),
+});
+
+// Mirrors AccountDtos.CreateAccountRequest's validation (backend/.../AccountDtos.java).
+export const linkAccountFormSchema = z.object({
+  institutionId: z.string().uuid("Choose an institution"),
+  provider: z.literal("MANUAL"),
+  displayName: z.string().trim().min(1, "Give this account a name").max(80),
+  accountMask: z.string().regex(/^\d{4}$/, "Enter the last 4 digits"),
+  currency: z.enum(["UGX", "CDF", "USD"], { required_error: "Choose a currency" }),
+  openingBalance: z
+    .string()
+    .min(1, "Enter the current balance")
+    .refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "Enter a valid amount"),
 });

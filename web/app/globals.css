@@ -25,7 +25,7 @@
   --border: 220 16.7% 92.9%;
   --input: 216.9 16% 84.1%;
   --ring: 211.5 99.2% 50%;
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 }
 
 * {
@@ -157,39 +157,19 @@
   }
 
   .home-content {
-    @apply no-scrollbar flex w-full flex-1 flex-col gap-8 px-5 sm:px-8 py-7 lg:py-12 xl:max-h-screen xl:overflow-y-scroll;
+    @apply no-scrollbar flex w-full flex-1 flex-col gap-6 px-5 sm:px-8 py-6 lg:py-8 xl:max-h-screen xl:overflow-y-scroll;
   }
 
   .home-header {
-    @apply flex flex-col justify-between gap-8;
-  }
-
-  .total-balance {
-    @apply flex w-full items-center gap-4 rounded-xl border border-gray-200 p-4 shadow-chart sm:gap-6 sm:p-6;
-  }
-
-  .total-balance-chart {
-    @apply flex size-full max-w-[100px] items-center sm:max-w-[120px];
-  }
-
-  .total-balance-label {
-    @apply text-14 font-medium text-gray-600;
-  }
-
-  .total-balance-amount {
-    @apply text-24 lg:text-30 flex-1 font-semibold text-gray-900;
+    @apply flex flex-col justify-between gap-5;
   }
 
   .recent-transactions {
-    @apply flex w-full flex-col gap-6;
+    @apply flex w-full flex-col gap-4;
   }
 
   .view-all-btn {
     @apply text-14 rounded-lg border border-gray-300 px-4 py-2.5 font-semibold text-gray-700;
-  }
-
-  .recent-transactions {
-    @apply flex w-full flex-col gap-6;
   }
 
   .recent-transactions-label {
@@ -202,7 +182,7 @@
 
   /* Right sidebar */
   .right-sidebar {
-    @apply no-scrollbar hidden h-screen max-h-screen flex-col border-l border-gray-200 lg:flex w-[300px] lg:overflow-y-scroll !important;
+    @apply no-scrollbar hidden max-h-screen flex-col self-start border-l border-gray-200 lg:flex w-[300px] lg:overflow-y-auto !important;
   }
 
   .profile-banner {
@@ -218,7 +198,7 @@
   }
 
   .profile-details {
-    @apply flex flex-col pt-16;
+    @apply flex flex-col pt-12;
   }
 
   .profile-name {
@@ -230,21 +210,21 @@
   }
 
   .banks {
-    @apply flex flex-col justify-between gap-8 px-6 py-8;
+    @apply flex flex-col justify-between gap-6 px-6 py-6;
   }
 
   /* My Banks */
   .my-banks {
-    @apply flex h-screen max-h-screen w-full flex-col gap-8 bg-gray-25 p-8 xl:py-12;
+    @apply flex h-screen max-h-screen w-full flex-col gap-6 bg-gray-25 p-6 xl:py-8;
   }
 
   /* My Banks */
   .transactions {
-    @apply flex max-h-screen w-full flex-col gap-8 overflow-y-scroll bg-gray-25 p-8 xl:py-12;
+    @apply flex max-h-screen w-full flex-col gap-6 overflow-y-scroll bg-gray-25 p-6 xl:py-8;
   }
 
   .transactions-header {
-    @apply flex w-full flex-col items-start justify-between gap-8 md:flex-row;
+    @apply flex w-full flex-col items-start justify-between gap-5 md:flex-row;
   }
 
   .transactions-account {
@@ -269,15 +249,15 @@
 
   /* Bank Card */
   .bank-card {
-    @apply relative flex h-[168px] w-full max-w-[290px] justify-between rounded-[18px] border border-white bg-bank-gradient shadow-creditCard backdrop-blur-[6px];
+    @apply relative flex h-[168px] w-full max-w-[290px] justify-between rounded-xl border border-white bg-bank-gradient shadow-creditCard backdrop-blur-[6px] transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-lg;
   }
 
   .bank-card_content {
-    @apply relative z-10 flex size-full max-w-[206px] flex-col justify-between rounded-l-[18px] bg-gray-700 bg-bank-gradient px-5 pb-4 pt-5;
+    @apply relative z-10 flex size-full max-w-[206px] flex-col justify-between rounded-l-xl bg-gray-700 bg-bank-gradient px-5 pb-4 pt-5;
   }
 
   .bank-card_icon {
-    @apply flex size-full flex-1 flex-col items-end justify-between rounded-r-[20px] bg-bank-gradient bg-cover bg-center bg-no-repeat py-5 pr-5;
+    @apply flex size-full flex-1 flex-col items-end justify-between rounded-r-xl bg-bank-gradient bg-cover bg-center bg-no-repeat py-5 pr-5;
   }
 
   /* Bank Info */
@@ -300,7 +280,7 @@
   }
 
   .mobilenav-sheet_close {
-    @apply flex gap-3 items-center p-4 rounded-lg w-full max-w-60;
+    @apply flex gap-3 items-center px-3 py-2 rounded-lg w-full max-w-60;
   }
 
   /* PlaidLink */
@@ -388,7 +368,7 @@
 
   /* Sidebar */
   .sidebar {
-    @apply sticky left-0 top-0 flex h-screen w-fit flex-col  justify-between border-r border-gray-200 bg-white pt-8 text-white max-md:hidden sm:p-4 lg:p-6 2xl:w-[280px];
+    @apply sticky left-0 top-0 flex h-screen w-fit flex-col  justify-between border-r border-gray-200 bg-white pt-6 text-white max-md:hidden sm:p-4 lg:p-5 2xl:w-[280px];
   }
 
   .sidebar-logo {
@@ -396,7 +376,7 @@
   }
 
   .sidebar-link {
-    @apply flex gap-3 items-center py-1 md:p-3 2xl:p-4 rounded-lg justify-center lg:justify-start;
+    @apply flex gap-3 items-center py-1 md:px-2.5 md:py-2 rounded-lg justify-center lg:justify-start;
   }
 
   .sidebar-label {

@@ -41,6 +41,10 @@ const AuthForm = ({ type }:{ type: string}) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            firstName: "",
+            lastName: "",
+            nationalId: "",
+            phone: "",
             email: "",
             password: "",
         },
@@ -144,21 +148,12 @@ const AuthForm = ({ type }:{ type: string}) => {
                                 />
                             </div>
 
-                            <div className="flex gap-4">
-                                <CustomInput
-                                    control={form.control}
-                                    name='dateOfBirth'
-                                    label='Date of Birth'
-                                    placeholder='YYYY-MM-DD'
-                                />
-
-                                <CustomInput
-                                    control={form.control}
-                                    name='nationalId'
-                                    label='National ID'
-                                    placeholder='Enter your national ID number'
-                                />
-                            </div>
+                            <CustomInput
+                                control={form.control}
+                                name='nationalId'
+                                label='National ID'
+                                placeholder='Enter your national ID number'
+                            />
 
                             <CustomInput
                                 control={form.control}
@@ -166,44 +161,6 @@ const AuthForm = ({ type }:{ type: string}) => {
                                 label='Phone Number'
                                 placeholder='Example: +256771234567'
                             />
-                        </div>
-
-                        <Separator />
-
-                        <div className="flex flex-col gap-2">
-                            <p className="text-14 flex items-center gap-2 font-semibold text-gray-500">
-                                <span className="size-1.5 rounded-full bg-bankGradient" />
-                                Address
-                            </p>
-                            <CustomInput
-                                control={form.control}
-                                name='address1'
-                                label='Address'
-                                placeholder='Enter your Specific Address'
-                            />
-
-                            <CustomInput
-                                control={form.control}
-                                name='city'
-                                label='City'
-                                placeholder='Enter your City'
-                            />
-
-                            <div className="flex gap-4">
-                                <CustomInput
-                                    control={form.control}
-                                    name='state'
-                                    label='State'
-                                    placeholder='Example: Kampala'
-                                />
-
-                                <CustomInput
-                                    control={form.control}
-                                    name='postalCode'
-                                    label='Postal Code'
-                                    placeholder='Optional'
-                                />
-                            </div>
                         </div>
 
                         <Separator />
@@ -228,6 +185,13 @@ const AuthForm = ({ type }:{ type: string}) => {
                 label='Password'
                 placeholder='Enter your password'
                 />
+                {type === 'sign-in' && (
+                    <div className='flex justify-end'>
+                        <Link href='/forgot-password' className='form-link text-14'>
+                            Forgot password?
+                        </Link>
+                    </div>
+                )}
                 <div className='flex flex-col gap-4'>
 
                 {formError && (
