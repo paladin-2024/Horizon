@@ -6,8 +6,14 @@ import { formatMoney } from "@/lib/money"
 const PALETTE = {
     light: ["#0179FE", "#2265d8", "#2f91fa", "#4893FF", "#194185", "#6172F3"],
     // White-on-blue tints for the gradient hero card — the light palette is invisible there.
-    dark: ["#FFFFFF", "rgba(255,255,255,0.75)", "rgba(255,255,255,0.55)", "rgba(255,255,255,0.4)"],
+    // Spread wide (not a gentle fade) so adjacent slices stay visually distinct.
+    dark: ["#FFFFFF", "rgba(255,255,255,0.35)", "rgba(255,255,255,0.75)", "rgba(255,255,255,0.15)"],
 };
+
+// A thin cut line between slices in the card's own background color — without
+// it, two similar-opacity "dark" tints (the common case: 2 accounts) merge
+// into what reads as a single plain ring instead of a chart.
+const STROKE = { light: "#FFFFFF", dark: "#0179FE" };
 
 /** Renders accounts that already share one currency — callers must group by currency first. */
 const DoughnutChart = ({ accounts, tone = "light" }: { accounts: ApiAccount[]; tone?: "light" | "dark" }) => {
@@ -51,7 +57,9 @@ const DoughnutChart = ({ accounts, tone = "light" }: { accounts: ApiAccount[]; t
                     dataKey="value"
                     nameKey="name"
                     innerRadius="72%"
-                    strokeWidth={0}
+                    strokeWidth={hasAccounts && data.length > 1 ? 2 : 0}
+                    stroke={STROKE[tone]}
+                    paddingAngle={hasAccounts && data.length > 1 ? 3 : 0}
                     startAngle={90}
                     endAngle={-270}
                 >
