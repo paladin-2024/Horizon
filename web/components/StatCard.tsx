@@ -28,13 +28,13 @@ const StatCard = ({
 }) => {
   return (
     <Card className="flex items-center gap-4 p-4 sm:p-5">
-      <span className={cn("flex size-10 shrink-0 items-center justify-center rounded-full", TINT[tint].bg)}>
-        <Icon icon={icon} size={20} className={TINT[tint].text} />
+      <span className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", TINT[tint].bg)}>
+        <Icon icon={icon} size={22} className={TINT[tint].text} />
       </span>
       <div className="flex min-w-0 flex-col gap-1">
-        <p className="text-12 font-medium text-gray-500">{label}</p>
+        <p className="text-12 font-semibold uppercase tracking-wide text-gray-500">{label}</p>
         <div className="flex items-baseline gap-2">
-          <p className="text-18 font-semibold text-gray-900">{value}</p>
+          <p className="text-24 font-bold text-gray-900">{value}</p>
           {delta && (
             <Badge
               className={cn(
