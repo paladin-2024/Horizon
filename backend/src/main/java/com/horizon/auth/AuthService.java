@@ -67,7 +67,7 @@ class AuthService {
         if (existing.isPresent()) {
             UserCredentials credentials = existing.get();
             if (!credentials.phoneVerified()) {
-                otpService.issue(phone);
+                otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
             }
             auditLog.record(credentials.userId(), "auth.register.duplicate_phone", Map.of());
             return;
@@ -84,7 +84,7 @@ class AuthService {
                     request.email(),
                     request.nationalId()));
             auditLog.record(created.id(), "auth.register", Map.of("country", request.country()));
-            otpService.issue(phone);
+            otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
         } catch (DataIntegrityViolationException e) {
             // The phone or the email is taken (a race, or a taken email): answer as if it worked.
             auditLog.record(null, "auth.register.conflict", Map.of());
@@ -97,7 +97,7 @@ class AuthService {
         UserCredentials credentials = userService.findCredentialsByPhone(phone)
                 .orElseThrow(() -> ApiException.badRequest("invalid_otp", INVALID_OTP_MESSAGE));
 
-        if (!otpService.consume(phone, request.code())) {
+        if (!otpService.consume(phone, request.code(), OtpPurpose.PHONE_VERIFICATION)) {
             auditLog.record(credentials.userId(), "auth.verify_otp.failed", Map.of());
             throw ApiException.badRequest("invalid_otp", INVALID_OTP_MESSAGE);
         }
@@ -115,9 +115,42 @@ class AuthService {
         userService.findCredentialsByPhone(phone)
                 .filter(credentials -> !credentials.phoneVerified())
                 .ifPresent(credentials -> {
-                    otpService.issue(phone);
+                    otpService.issue(phone, OtpPurpose.PHONE_VERIFICATION);
                     auditLog.record(credentials.userId(), "auth.otp.resend", Map.of());
                 });
+    }
+
+    /**
+     * Always ends in the same 202. Looks the account up by email (login is email-first) and, if it
+     * exists and its phone is verified, sends a password-reset code to that phone. A code is never
+     * sent for an account whose phone isn't verified yet — it has no way to receive it.
+     */
+    void forgotPassword(ForgotPasswordRequest request, String clientIp) {
+        rateLimitGuard.check("pwreset:ip:" + clientIp, RateLimitPolicies.OTP_SEND_PER_IP);
+
+        userService.findCredentialsByEmail(request.email().trim().toLowerCase(Locale.ROOT))
+                .filter(UserCredentials::phoneVerified)
+                .ifPresent(credentials -> {
+                    rateLimitGuard.check("pwreset:" + credentials.userId(), RateLimitPolicies.OTP_SEND);
+                    otpService.issue(credentials.phone(), OtpPurpose.PASSWORD_RESET);
+                    auditLog.record(credentials.userId(), "auth.forgot_password", Map.of());
+                });
+    }
+
+    /** Checks the code sent to the account's phone and, if it matches, sets the new password. */
+    void resetPassword(ResetPasswordRequest request) {
+        UserCredentials credentials = userService
+                .findCredentialsByEmail(request.email().trim().toLowerCase(Locale.ROOT))
+                .orElseThrow(() -> ApiException.badRequest("invalid_otp", INVALID_OTP_MESSAGE));
+
+        if (!otpService.consume(credentials.phone(), request.code(), OtpPurpose.PASSWORD_RESET)) {
+            auditLog.record(credentials.userId(), "auth.reset_password.failed", Map.of());
+            throw ApiException.badRequest("invalid_otp", INVALID_OTP_MESSAGE);
+        }
+
+        userService.updatePassword(credentials.userId(), passwordEncoder.encode(request.newPassword()));
+        refreshTokenService.revokeAllFor(credentials.userId());
+        auditLog.record(credentials.userId(), "auth.reset_password", Map.of());
     }
 
     /**

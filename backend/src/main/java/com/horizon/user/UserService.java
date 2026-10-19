@@ -60,6 +60,11 @@ public class UserService {
         repository.findById(userId).ifPresent(user -> user.markPhoneVerified(Instant.now()));
     }
 
+    @Transactional
+    public void updatePassword(UUID userId, String passwordHash) {
+        repository.findById(userId).ifPresent(user -> user.changePasswordHash(passwordHash, Instant.now()));
+    }
+
     /** Only for tests and future support tooling: the decrypted national ID. */
     @Transactional(readOnly = true)
     public Optional<String> nationalIdOf(UUID userId) {

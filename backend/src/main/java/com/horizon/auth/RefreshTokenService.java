@@ -53,4 +53,9 @@ class RefreshTokenService {
     Optional<UUID> revokeFamilyOf(String presentedToken) {
         return store.revokeFamilyOf(presentedToken);
     }
+
+    /** Revokes every session (every family) belonging to this user, e.g. after a password reset. */
+    void revokeAllFor(UUID userId) {
+        store.revokeAllFor(userId);
+    }
 }

@@ -126,4 +126,9 @@ class User {
             this.updatedAt = now;
         }
     }
+
+    void changePasswordHash(String passwordHash, Instant now) {
+        this.passwordHash = passwordHash;
+        this.updatedAt = now;
+    }
 }

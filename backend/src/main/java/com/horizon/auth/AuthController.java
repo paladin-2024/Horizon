@@ -55,6 +55,19 @@ class AuthController {
         return ResponseEntity.accepted().build();
     }
 
+    @PostMapping("/forgot-password")
+    ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request,
+            HttpServletRequest httpRequest) {
+        authService.forgotPassword(request, clientIp.of(httpRequest));
+        return ResponseEntity.accepted().build();
+    }
+
+    @PostMapping("/reset-password")
+    ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        authService.resetPassword(request);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PostMapping("/login")
     ResponseEntity<MeResponse> login(@Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest, HttpServletResponse httpResponse) {

@@ -73,4 +73,9 @@ class RefreshTokenStore {
                     return token.getUserId();
                 });
     }
+
+    @Transactional
+    void revokeAllFor(UUID userId) {
+        repository.revokeAllForUser(userId, Instant.now());
+    }
 }
